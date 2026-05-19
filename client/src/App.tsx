@@ -5,14 +5,29 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import Orders from "./pages/Orders";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminProducts from "./pages/AdminProducts";
+import AdminProductForm from "./pages/AdminProductForm";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/" component={Home} />
+      <Route path="/produtos" component={Products} />
+      <Route path="/produtos/:id" component={ProductDetail} />
+      <Route path="/carrinho" component={Cart} />
+      <Route path="/checkout" component={Checkout} />
+      <Route path="/pedidos" component={Orders} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/produtos" component={AdminProducts} />
+      <Route path="/admin/produtos/novo" component={AdminProductForm} />
+      <Route path="/admin/produtos/:id/editar" component={AdminProductForm} />
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,10 +1,20 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { 
+  getCategories, 
+  getProducts, 
+  getProductById, 
+  getProductsByCategory,
+  getCartItems,
+  getUserOrders,
+  getOrderById,
+  getOrderItems
+} from "./db";
+import { z } from "zod";
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -17,12 +27,65 @@ export const appRouter = router({
     }),
   }),
 
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  // Categories procedures
+  categories: router({
+    list: publicProcedure.query(async () => {
+      return getCategories();
+    }),
+  }),
+
+  // Products procedures
+  products: router({
+    list: publicProcedure
+      .input(z.object({
+        categoryId: z.number().optional(),
+        limit: z.number().default(20),
+        offset: z.number().default(0),
+      }))
+      .query(async ({ input }) => {
+        if (input.categoryId) {
+          return getProductsByCategory(input.categoryId);
+        }
+        return getProducts(input.limit, input.offset);
+      }),
+    
+    featured: publicProcedure.query(async () => {
+      const products = await getProducts(4, 0);
+      return products;
+    }),
+
+    getById: publicProcedure
+      .input(z.number())
+      .query(async ({ input }) => {
+        return getProductById(input);
+      }),
+  }),
+
+  // Cart procedures
+  cart: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return getCartItems(ctx.user.id);
+    }),
+  }),
+
+  // Orders procedures
+  orders: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return getUserOrders(ctx.user.id);
+    }),
+
+    getById: protectedProcedure
+      .input(z.number())
+      .query(async ({ input }) => {
+        return getOrderById(input);
+      }),
+
+    items: protectedProcedure
+      .input(z.number())
+      .query(async ({ input }) => {
+        return getOrderItems(input);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
