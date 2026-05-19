@@ -97,7 +97,7 @@ export async function getProducts(limit?: number, offset?: number) {
   let query = db.select().from(products).where(eq(products.active, 1));
   if (limit) query = query.limit(limit);
   if (offset) query = query.offset(offset);
-  return query;
+  return await query;
 }
 
 export async function getProductById(id: number) {
@@ -112,7 +112,7 @@ export async function getProductsByCategory(categoryId: number) {
   const db = await getDb();
   if (!db) return [];
   
-  return db.select().from(products)
+  return await db.select().from(products)
     .where(and(eq(products.categoryId, categoryId), eq(products.active, 1)));
 }
 
@@ -121,7 +121,7 @@ export async function getCategories() {
   const db = await getDb();
   if (!db) return [];
   
-  return db.select().from(categories);
+  return await db.select().from(categories);
 }
 
 export async function getCategoryBySlug(slug: string) {
@@ -137,7 +137,7 @@ export async function getCartItems(userId: number) {
   const db = await getDb();
   if (!db) return [];
   
-  return db.select().from(cartItems).where(eq(cartItems.userId, userId));
+  return await db.select().from(cartItems).where(eq(cartItems.userId, userId));
 }
 
 // Order queries
@@ -145,7 +145,7 @@ export async function getUserOrders(userId: number) {
   const db = await getDb();
   if (!db) return [];
   
-  return db.select().from(orders).where(eq(orders.userId, userId));
+  return await db.select().from(orders).where(eq(orders.userId, userId));
 }
 
 export async function getOrderById(id: number) {
@@ -160,5 +160,5 @@ export async function getOrderItems(orderId: number) {
   const db = await getDb();
   if (!db) return [];
   
-  return db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  return await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
 }

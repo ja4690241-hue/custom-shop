@@ -19,6 +19,7 @@ export default function ProductDetail() {
   const [customText, setCustomText] = useState("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("");
+  const [customizationPrice, setCustomizationPrice] = useState(0);
 
   const { data: product, isLoading } = trpc.products.getById.useQuery(productId || 0, {
     enabled: !!productId,
@@ -26,6 +27,33 @@ export default function ProductDetail() {
 
   const availableColors = product?.availableColors ? JSON.parse(product.availableColors) : [];
   const availableSizes = product?.availableSizes ? JSON.parse(product.availableSizes) : [];
+
+  // Calcular preço com personalização
+  const calculateCustomizationPrice = (text: string, color: string, size: string) => {
+    let price = 0;
+    if (text) price += 15; // R$ 15 por texto personalizado
+    if (color && color !== "#000000") price += 5; // R$ 5 por cor especial
+    if (size && size !== "Único") price += 10; // R$ 10 por tamanho
+    return price;
+  };
+
+  const handleCustomTextChange = (value: string) => {
+    setCustomText(value);
+    const newPrice = calculateCustomizationPrice(value, selectedColor, selectedSize);
+    setCustomizationPrice(newPrice);
+  };
+
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
+    const newPrice = calculateCustomizationPrice(customText, color, selectedSize);
+    setCustomizationPrice(newPrice);
+  };
+
+  const handleSizeChange = (size: string) => {
+    setSelectedSize(size);
+    const newPrice = calculateCustomizationPrice(customText, selectedColor, size);
+    setCustomizationPrice(newPrice);
+  };
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -40,11 +68,13 @@ export default function ProductDetail() {
       return;
     }
 
+    const finalPrice = parseFloat(product.price as any) + customizationPrice;
+
     addItem({
       id: nanoid(),
       productId: product.id,
       productName: product.name,
-      price: parseFloat(product.price as any),
+      price: finalPrice,
       quantity,
       customization: {
         text: customText || undefined,
@@ -59,6 +89,7 @@ export default function ProductDetail() {
     setCustomText("");
     setSelectedColor("");
     setSelectedSize("");
+    setCustomizationPrice(0);
   };
 
   if (isLoading) {
@@ -89,6 +120,9 @@ export default function ProductDetail() {
       </div>
     );
   }
+
+  const basePrice = parseFloat(product.price as any);
+  const totalPrice = basePrice + customizationPrice;
 
   return (
     <div className="min-h-screen bg-background">
@@ -123,14 +157,29 @@ export default function ProductDetail() {
             <div>
               <h1 className="text-5xl font-bold text-foreground mb-4">{product.name}</h1>
               <p className="text-foreground/60 text-lg mb-6">{product.description}</p>
-              <p className="text-4xl font-bold text-accent">
-                R$ {parseFloat(product.price as any).toFixed(2)}
-              </p>
+              <div className="space-y-2">
+                <p className="text-sm text-foreground/60">Preço base</p>
+                <p className="text-4xl font-bold text-accent">
+                  R$ {totalPrice.toFixed(2)}
+                </p>
+                {customizationPrice > 0 && (
+                  <p className="text-xs text-foreground/50">
+                    (R$ {basePrice.toFixed(2)} + R$ {customizationPrice.toFixed(2)} personalização)
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Customization Options */}
             <div className="space-y-6 bg-card border border-border rounded-lg p-6">
-              <h3 className="text-2xl font-bold text-foreground">Personalização</h3>
+              <div>
+                <h3 className="text-2xl font-bold text-foreground mb-2">Personalização</h3>
+                {customizationPrice > 0 && (
+                  <p className="text-sm text-foreground/60">
+                    Custo adicional: R$ {customizationPrice.toFixed(2)}
+                  </p>
+                )}
+              </div>
 
               {/* Custom Text */}
               <div>
@@ -141,11 +190,12 @@ export default function ProductDetail() {
                   type="text"
                   placeholder="Digite seu texto aqui"
                   value={customText}
-                  onChange={(e) => setCustomText(e.target.value)}
+                  onChange={(e) => handleCustomTextChange(e.target.value)}
                   maxLength={50}
                   className="w-full"
                 />
                 <p className="text-xs text-foreground/50 mt-1">{customText.length}/50 caracteres</p>
+                {customText && <p className="text-xs text-accent mt-1">+R$ 15,00</p>}
               </div>
 
               {/* Color Selection */}
@@ -158,7 +208,7 @@ export default function ProductDetail() {
                     {availableColors.map((color: string) => (
                       <button
                         key={color}
-                        onClick={() => setSelectedColor(color)}
+                        onClick={() => handleColorChange(color)}
                         className={`w-12 h-12 rounded-lg border-2 transition-all ${
                           selectedColor === color
                             ? "border-accent scale-110"
@@ -169,6 +219,9 @@ export default function ProductDetail() {
                       />
                     ))}
                   </div>
+                  {selectedColor && selectedColor !== "#000000" && (
+                    <p className="text-xs text-accent mt-2">+R$ 5,00</p>
+                  )}
                 </div>
               )}
 
@@ -182,7 +235,7 @@ export default function ProductDetail() {
                     {availableSizes.map((size: string) => (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(size)}
+                        onClick={() => handleSizeChange(size)}
                         className={`px-6 py-2 rounded border-2 font-semibold transition-all ${
                           selectedSize === size
                             ? "bg-accent text-accent-foreground border-accent"
@@ -193,6 +246,9 @@ export default function ProductDetail() {
                       </button>
                     ))}
                   </div>
+                  {selectedSize && selectedSize !== "Único" && (
+                    <p className="text-xs text-accent mt-2">+R$ 10,00</p>
+                  )}
                 </div>
               )}
 

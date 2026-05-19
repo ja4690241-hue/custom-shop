@@ -136,20 +136,24 @@ export default function AdminProductForm() {
               Opções de Personalização
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                name="colors"
-                placeholder="Cores (separadas por vírgula)"
-                value={formData.colors}
-                onChange={handleChange}
-                example="#000000, #FFFFFF, #FF0000"
-              />
-              <Input
-                name="sizes"
-                placeholder="Tamanhos (separados por vírgula)"
-                value={formData.sizes}
-                onChange={handleChange}
-                example="P, M, G, GG"
-              />
+              <div>
+                <Input
+                  name="colors"
+                  placeholder="Cores (separadas por vírgula)"
+                  value={formData.colors}
+                  onChange={handleChange}
+                />
+                <p className="text-xs text-foreground/50 mt-1">Ex: #000000, #FFFFFF, #FF0000</p>
+              </div>
+              <div>
+                <Input
+                  name="sizes"
+                  placeholder="Tamanhos (separados por vírgula)"
+                  value={formData.sizes}
+                  onChange={handleChange}
+                />
+                <p className="text-xs text-foreground/50 mt-1">Ex: P, M, G, GG</p>
+              </div>
             </div>
           </section>
 

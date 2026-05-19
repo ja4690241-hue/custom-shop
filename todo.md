@@ -20,19 +20,19 @@
 - [x] Página de listagem com grid responsivo
 - [x] Filtros por categoria
 - [x] Exibição de foto, nome, preço e botão de compra
-- [ ] Paginação ou infinite scroll
+- [x] Paginação ou infinite scroll
 
 ## Página de Detalhes do Produto
 - [x] Galeria de imagens do produto
 - [x] Opções de personalização (texto, cor, tamanho)
 - [x] Botão adicionar ao carrinho
-- [ ] Preço com cálculo de personalização
+- [x] Preço com cálculo de personalização
 
 ## Carrinho de Compras
 - [x] Visualização de itens no carrinho
 - [x] Editar quantidade e remover itens
 - [x] Cálculo automático do total
-- [ ] Persistência do carrinho (localStorage/DB)
+- [x] Persistência do carrinho (localStorage/DB)
 
 ## Checkout e Pedidos
 - [x] Formulário de dados do cliente
@@ -68,10 +68,10 @@
 - [ ] Exibição de imagens do S3
 
 ## Testes
-- [ ] Testes unitários com Vitest
+- [x] Testes unitários com Vitest
 - [ ] Testes de integração
 - [ ] Testes E2E
 
 ## Deploy
-- [ ] Criar checkpoint final
+- [x] Criar checkpoint final
 - [ ] Publicar no Manus
