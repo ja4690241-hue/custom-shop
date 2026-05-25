@@ -1,132 +1,176 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { formatCurrency } from "@/lib/shop";
+import { ArrowLeft, ArrowRight, Search, SlidersHorizontal, Sparkles } from "lucide-react";
+
+const getInitialCategorySlug = () => {
+  if (typeof window === "undefined") return "todos";
+  return new URLSearchParams(window.location.search).get("categoria") ?? "todos";
+};
 
 export default function Products() {
   const [, navigate] = useLocation();
-  const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState(getInitialCategorySlug);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("featured");
 
-  const { data: categories } = trpc.categories.list.useQuery();
-  const { data: products, isLoading } = trpc.products.list.useQuery({
-    categoryId: selectedCategory,
-    limit: 20,
+  const { data: categories = [] } = trpc.categories.list.useQuery();
+  const selectedCategory = categories.find((category) => category.slug === selectedCategorySlug);
+  const { data: products = [], isLoading } = trpc.products.list.useQuery({
+    categoryId: selectedCategory?.id,
+    limit: 50,
     offset: 0,
   });
 
+  const filteredProducts = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    const searched = products.filter((product) => {
+      if (!normalizedQuery) return true;
+      return `${product.name} ${product.description ?? ""}`.toLowerCase().includes(normalizedQuery);
+    });
+
+    return [...searched].sort((a, b) => {
+      if (sort === "price-asc") return Number(a.price) - Number(b.price);
+      if (sort === "price-desc") return Number(b.price) - Number(a.price);
+      if (sort === "stock") return b.stock - a.stock;
+      return a.id - b.id;
+    });
+  }, [products, query, sort]);
+
+  const handleCategory = (slug: string) => {
+    setSelectedCategorySlug(slug);
+    const url = slug === "todos" ? "/produtos" : `/produtos?categoria=${slug}`;
+    window.history.replaceState(null, "", url);
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border bg-card sticky top-0 z-40">
-        <div className="container max-w-7xl mx-auto px-4 py-4">
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-accent hover:text-accent/80 transition-colors mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Voltar
+      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl">
+        <div className="container flex max-w-7xl flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
+          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-accent">
+            <ArrowLeft className="h-4 w-4" /> Voltar para início
           </button>
-          <h1 className="text-4xl font-bold text-foreground">Nossos Produtos</h1>
+          <Button onClick={() => navigate("/carrinho")} className="rounded-full">
+            Ver carrinho
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
-      </div>
+      </header>
 
-      <div className="container max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar - Categories */}
-          <aside className="lg:col-span-1">
-            <div className="bg-card border border-border rounded-lg p-6">
-              <h3 className="text-xl font-bold text-foreground mb-6">Categorias</h3>
-              <div className="space-y-3">
-                <button
-                  onClick={() => setSelectedCategory(undefined)}
-                  className={`w-full text-left px-4 py-2 rounded transition-colors ${
-                    selectedCategory === undefined
-                      ? "bg-accent text-accent-foreground"
-                      : "text-foreground hover:bg-muted"
-                  }`}
-                >
-                  Todos os Produtos
-                </button>
-                {categories?.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`w-full text-left px-4 py-2 rounded transition-colors ${
-                      selectedCategory === category.id
-                        ? "bg-accent text-accent-foreground"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {category.name}
-                  </button>
-                ))}
-              </div>
+      <main className="container max-w-7xl py-10">
+        <section className="mb-10 overflow-hidden rounded-[2rem] border border-border bg-card p-8 shadow-sm md:p-10">
+          <div className="grid gap-8 lg:grid-cols-[1fr_0.75fr] lg:items-end">
+            <div>
+              <Badge className="mb-5 rounded-full bg-accent/15 px-4 py-2 text-accent-foreground hover:bg-accent/20">
+                <Sparkles className="mr-2 h-4 w-4" /> Catálogo personalizável
+              </Badge>
+              <h1 className="text-5xl font-black tracking-tight">Produtos para criar algo único.</h1>
+              <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
+                Filtre por categoria, busque pelo produto ideal e abra o editor para escolher texto, cor, tamanho e quantidade com preço atualizado em tempo real.
+              </p>
             </div>
-          </aside>
+            <div className="rounded-3xl bg-secondary p-5">
+              <div className="flex items-center gap-3 text-sm font-semibold text-muted-foreground">
+                <SlidersHorizontal className="h-5 w-5 text-accent" /> Recomendações aplicadas
+              </div>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Busca clara, filtros visíveis, cards com preço e estoque, e CTA direcionado para personalização reduzem fricção na jornada de compra.
+              </p>
+            </div>
+          </div>
+        </section>
 
-          {/* Main Content - Products Grid */}
-          <main className="lg:col-span-3">
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="space-y-4">
-                    <Skeleton className="w-full aspect-square rounded-lg" />
-                    <Skeleton className="w-full h-6" />
-                    <Skeleton className="w-1/2 h-6" />
-                  </div>
-                ))}
-              </div>
-            ) : products && products.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {products.map((product) => (
-                  <div
-                    key={product.id}
-                    className="group cursor-pointer"
-                    onClick={() => navigate(`/produtos/${product.id}`)}
-                  >
-                    <div className="relative overflow-hidden rounded-lg bg-muted mb-4 aspect-square">
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/produtos/${product.id}`);
-                          }}
-                          className="bg-accent text-accent-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        >
-                          <ShoppingBag className="w-5 h-5 mr-2" />
-                          Ver Detalhes
-                        </Button>
-                      </div>
+        <section className="mb-8 grid gap-4 rounded-[1.7rem] border border-border bg-card p-4 shadow-sm lg:grid-cols-[1fr_auto_auto]">
+          <label className="relative block">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Buscar por caneca, camiseta, kit ou presente..."
+              className="h-12 rounded-full pl-12"
+            />
+          </label>
+          <select
+            value={selectedCategorySlug}
+            onChange={(event) => handleCategory(event.target.value)}
+            className="h-12 rounded-full border border-input bg-background px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="todos">Todas as categorias</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.slug}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={sort}
+            onChange={(event) => setSort(event.target.value)}
+            className="h-12 rounded-full border border-input bg-background px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="featured">Destaques</option>
+            <option value="price-asc">Menor preço</option>
+            <option value="price-desc">Maior preço</option>
+            <option value="stock">Maior estoque</option>
+          </select>
+        </section>
+
+        {isLoading ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton key={index} className="h-[420px] rounded-[1.7rem]" />
+            ))}
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="rounded-[2rem] border border-dashed border-border bg-card p-12 text-center">
+            <h2 className="text-3xl font-black">Nenhum produto encontrado</h2>
+            <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
+              Tente remover filtros ou buscar por outro termo. Novas opções de personalização podem ser adicionadas pelo painel administrativo.
+            </p>
+            <Button onClick={() => { setQuery(""); handleCategory("todos"); }} className="mt-6 rounded-full">
+              Limpar filtros
+            </Button>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredProducts.map((product) => {
+              const category = categories.find((item) => item.id === product.categoryId);
+              return (
+                <button
+                  key={product.id}
+                  onClick={() => navigate(`/produtos/${product.id}`)}
+                  className="group overflow-hidden rounded-[1.8rem] border border-border bg-card text-left shadow-sm transition hover:-translate-y-1 hover:border-accent hover:shadow-2xl"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                    <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                      <Badge className="rounded-full">{category?.name ?? "Personalizável"}</Badge>
+                      {product.stock <= 15 && <Badge variant="secondary" className="rounded-full">Últimas unidades</Badge>}
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
-                      {product.name}
-                    </h3>
-                    <p className="text-foreground/60 text-sm mb-4 line-clamp-2">
-                      {product.description}
-                    </p>
-                    <p className="text-accent font-bold text-xl">
-                      R$ {parseFloat(product.price as any).toFixed(2)}
-                    </p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-foreground/60 text-lg">
-                  Nenhum produto encontrado nesta categoria.
-                </p>
-              </div>
-            )}
-          </main>
-        </div>
-      </div>
+                  <div className="p-6">
+                    <h2 className="text-2xl font-black tracking-tight">{product.name}</h2>
+                    <p className="mt-3 line-clamp-2 min-h-12 text-sm leading-6 text-muted-foreground">{product.description}</p>
+                    <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">A partir de</span>
+                        <strong className="block text-2xl text-accent">{formatCurrency(Number(product.price))}</strong>
+                      </div>
+                      <span className="inline-flex items-center rounded-full bg-foreground px-4 py-2 text-sm font-bold text-background">
+                        Personalizar <ArrowRight className="ml-2 h-4 w-4" />
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
