@@ -81,7 +81,7 @@ export default function Home() {
         <section className="relative overflow-hidden border-b border-border/70">
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.22),transparent_34%),linear-gradient(135deg,rgba(17,24,39,0.04),transparent_40%)]" />
           <div className="container grid max-w-7xl gap-12 py-16 lg:grid-cols-[1.08fr_0.92fr] lg:py-24">
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center animate-fade-in-up">
               <Badge className="mb-6 w-fit rounded-full bg-accent/15 px-4 py-2 text-accent-foreground hover:bg-accent/20">
                 <Star className="mr-2 h-4 w-4 fill-current" /> Loja de presentes personalizados
               </Badge>
@@ -116,12 +116,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-xl">
-              <div className="absolute -left-6 top-12 z-10 rounded-3xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur">
+            <div className="relative mx-auto w-full max-w-xl animate-slide-in-right">
+              <div className="absolute -left-6 top-12 z-10 rounded-3xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur animate-scale-in" style={{animationDelay: '0.2s'}}>
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Preview</p>
                 <p className="mt-1 text-sm font-bold">Texto + cor + tamanho</p>
               </div>
-              <div className="rounded-[2.2rem] border border-border bg-card p-5 shadow-2xl shadow-accent/10">
+              <div className="rounded-[2.2rem] border border-border bg-card p-5 shadow-2xl shadow-accent/10 transition-smooth hover:shadow-accent/20">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[1.7rem] bg-muted">
                     <img
@@ -151,9 +151,9 @@ export default function Home() {
 
         <section id="como-funciona" className="border-b border-border/70 bg-secondary/40 py-12">
           <div className="container grid max-w-7xl gap-4 md:grid-cols-4">
-            {benefits.map((benefit) => (
-              <div key={benefit.title} className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-                <benefit.icon className="mb-4 h-7 w-7 text-accent" />
+            {benefits.map((benefit, idx) => (
+              <div key={benefit.title} className="rounded-3xl border border-border bg-card p-6 shadow-sm transition-smooth hover:shadow-lg hover:border-accent/50 hover:-translate-y-1" style={{animationDelay: `${idx * 0.1}s`}}>
+                <benefit.icon className="mb-4 h-7 w-7 text-accent transition-smooth group-hover:scale-110" />
                 <h2 className="text-xl font-bold">{benefit.title}</h2>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{benefit.description}</p>
               </div>

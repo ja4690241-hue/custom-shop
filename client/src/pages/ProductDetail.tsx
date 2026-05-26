@@ -143,25 +143,25 @@ export default function ProductDetail() {
       <main className="container max-w-7xl py-10">
         <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-start">
           <section className="lg:sticky lg:top-24">
-            <div className="overflow-hidden rounded-[2rem] border border-border bg-card p-4 shadow-sm">
+            <div className="overflow-hidden rounded-[2rem] border border-border bg-card p-4 shadow-sm transition-smooth hover:shadow-lg">
               <div className="relative aspect-square overflow-hidden rounded-[1.5rem] bg-muted">
-                <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
-                <div className="absolute inset-x-6 bottom-6 rounded-[1.5rem] border border-white/40 bg-background/90 p-5 shadow-2xl backdrop-blur">
+                <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition-smooth" />
+                <div className="absolute inset-x-6 bottom-6 rounded-[1.5rem] border border-white/40 bg-background/90 p-5 shadow-2xl backdrop-blur transition-smooth">
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.28em] text-muted-foreground">Preview</p>
-                      <p className="mt-1 text-2xl font-black" style={{ color: selectedColor || undefined }}>
+                      <p className="mt-1 text-2xl font-black transition-colors" style={{ color: selectedColor || undefined }}>
                         {customText.trim() || "Seu texto aqui"}
                       </p>
                     </div>
-                    <Badge className="rounded-full bg-accent text-accent-foreground">Ao vivo</Badge>
+                    <Badge className="rounded-full bg-accent text-accent-foreground animate-pulse">Ao vivo</Badge>
                   </div>
                 </div>
               </div>
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              {["Arte revisada", "Compra segura", "Produção rápida"].map((item) => (
-                <div key={item} className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm font-semibold">
+              {["Arte revisada", "Compra segura", "Produção rápida"].map((item, idx) => (
+                <div key={item} className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm font-semibold transition-smooth hover:border-accent/50 hover:shadow-md" style={{animationDelay: `${idx * 0.1}s`}}>
                   <CheckCircle2 className="h-4 w-4 text-accent" /> {item}
                 </div>
               ))}
@@ -193,14 +193,14 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
+            <div className="rounded-[2rem] border border-border bg-card p-6 shadow-sm transition-smooth hover:shadow-lg">
               <div className="mb-6 flex items-center justify-between gap-4">
                 <div>
                   <h2 className="text-3xl font-black">Monte sua personalização</h2>
                   <p className="mt-2 text-sm text-muted-foreground">Todos os detalhes serão salvos no carrinho.</p>
                 </div>
-                <Button onClick={resetCustomization} type="button" variant="ghost" className="rounded-full">
-                  <RotateCcw className="mr-2 h-4 w-4" /> Limpar
+                <Button onClick={resetCustomization} type="button" variant="ghost" className="rounded-full btn-hover-lift">
+                  <RotateCcw className="mr-2 h-4 w-4 transition-transform group-hover:rotate-180" /> Limpar
                 </Button>
               </div>
 
