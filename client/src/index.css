@@ -184,62 +184,57 @@
   }
 
   .animate-fade-in-up {
-    animation: fadeInUp 0.5s ease-out;
+    animation: fadeInUp 0.5s ease-out forwards;
   }
 
   .animate-slide-in-right {
-    animation: slideInRight 0.4s ease-out;
+    animation: slideInRight 0.4s ease-out forwards;
   }
 
   .animate-scale-in {
-    animation: scaleIn 0.3s ease-out;
+    animation: scaleIn 0.3s ease-out forwards;
   }
 
   .transition-smooth {
-    @apply transition-all duration-300 ease-out;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .transition-fast {
-    @apply transition-all duration-150 ease-out;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Premium button hover effects */
   .btn-hover-lift {
-    @apply transition-smooth hover:shadow-lg hover:-translate-y-0.5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   /* Smooth focus states */
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-smooth;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .focus-ring:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
   }
 
   /* Loading skeleton */
   .skeleton {
-    @apply bg-gradient-to-r from-muted via-muted-foreground to-muted;
+    background: linear-gradient(to right, var(--muted) 8%, var(--muted-foreground) 18%, var(--muted) 33%);
     background-size: 1000px 100%;
     animation: shimmer 2s infinite;
   }
 }
 
 @layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
+    padding-left: 1rem;
     padding-right: 1rem;
   }
 
@@ -250,16 +245,16 @@
 
   @media (min-width: 640px) {
     .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
+      padding-left: 1.5rem;
       padding-right: 1.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .container {
-      padding-left: 2rem; /* 32px - desktop padding */
+      padding-left: 2rem;
       padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
+      max-width: 1280px;
     }
   }
 }
