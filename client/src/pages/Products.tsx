@@ -63,18 +63,18 @@ export default function Products() {
       </header>
 
       <main className="container max-w-7xl py-10">
-        <section className="mb-10 overflow-hidden rounded-[2rem] border border-border bg-card p-8 shadow-sm md:p-10">
+        <section className="mb-10 overflow-hidden rounded-[2rem] border border-border bg-card p-8 shadow-sm transition-smooth hover:shadow-lg md:p-10">
           <div className="grid gap-8 lg:grid-cols-[1fr_0.75fr] lg:items-end">
-            <div>
+            <div className="animate-fade-in-up">
               <Badge className="mb-5 rounded-full bg-accent/15 px-4 py-2 text-accent-foreground hover:bg-accent/20">
                 <Sparkles className="mr-2 h-4 w-4" /> Catálogo personalizável
               </Badge>
-              <h1 className="text-5xl font-black tracking-tight">Produtos para criar algo único.</h1>
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
+              <h1 className="text-4xl font-black tracking-tight sm:text-5xl">Produtos para criar algo único.</h1>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
                 Filtre por categoria, busque pelo produto ideal e abra o editor para escolher texto, cor, tamanho e quantidade com preço atualizado em tempo real.
               </p>
             </div>
-            <div className="rounded-3xl bg-secondary p-5">
+            <div className="rounded-3xl bg-secondary p-5 animate-slide-in-right">
               <div className="flex items-center gap-3 text-sm font-semibold text-muted-foreground">
                 <SlidersHorizontal className="h-5 w-5 text-accent" /> Recomendações aplicadas
               </div>
@@ -136,32 +136,33 @@ export default function Products() {
             </Button>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredProducts.map((product) => {
+          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredProducts.map((product, idx) => {
               const category = categories.find((item) => item.id === product.categoryId);
               return (
                 <button
                   key={product.id}
                   onClick={() => navigate(`/produtos/${product.id}`)}
-                  className="group overflow-hidden rounded-[1.8rem] border border-border bg-card text-left shadow-sm transition hover:-translate-y-1 hover:border-accent hover:shadow-2xl"
+                  className="group overflow-hidden rounded-[1.8rem] border border-border bg-card text-left shadow-sm transition-smooth hover:-translate-y-1 hover:border-accent hover:shadow-2xl"
+                  style={{animationDelay: `${idx * 0.05}s`}}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-                    <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
-                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                      <Badge className="rounded-full">{category?.name ?? "Personalizável"}</Badge>
-                      {product.stock <= 15 && <Badge variant="secondary" className="rounded-full">Últimas unidades</Badge>}
+                    <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition-smooth duration-500 group-hover:scale-110" />
+                    <div className="absolute left-3 top-3 flex flex-wrap gap-2 sm:left-4 sm:top-4">
+                      <Badge className="rounded-full text-xs sm:text-sm">{category?.name ?? "Personalizável"}</Badge>
+                      {product.stock <= 15 && <Badge variant="secondary" className="rounded-full text-xs sm:text-sm">Últimas unidades</Badge>}
                     </div>
                   </div>
-                  <div className="p-6">
-                    <h2 className="text-2xl font-black tracking-tight">{product.name}</h2>
-                    <p className="mt-3 line-clamp-2 min-h-12 text-sm leading-6 text-muted-foreground">{product.description}</p>
-                    <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
+                  <div className="p-4 sm:p-6">
+                    <h2 className="text-xl font-black tracking-tight sm:text-2xl">{product.name}</h2>
+                    <p className="mt-2 line-clamp-2 min-h-12 text-xs leading-6 text-muted-foreground sm:mt-3 sm:text-sm">{product.description}</p>
+                    <div className="mt-4 flex items-center justify-between border-t border-border pt-4 sm:mt-6 sm:pt-5">
                       <div>
                         <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">A partir de</span>
-                        <strong className="block text-2xl text-accent">{formatCurrency(Number(product.price))}</strong>
+                        <strong className="block text-xl text-accent sm:text-2xl">{formatCurrency(Number(product.price))}</strong>
                       </div>
-                      <span className="inline-flex items-center rounded-full bg-foreground px-4 py-2 text-sm font-bold text-background">
-                        Personalizar <ArrowRight className="ml-2 h-4 w-4" />
+                      <span className="inline-flex items-center rounded-full bg-foreground px-3 py-2 text-xs font-bold text-background transition-smooth group-hover:gap-1 sm:px-4 sm:py-2 sm:text-sm">
+                        Personalizar <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5 sm:ml-2 sm:h-4 sm:w-4" />
                       </span>
                     </div>
                   </div>
