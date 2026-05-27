@@ -1,14 +1,18 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus, Package, ShoppingCart, TrendingUp } from "lucide-react";
+import { useProducts } from "@/contexts/ProductsContext";
 
 export default function AdminDashboard() {
   const [, navigate] = useLocation();
+  const { products } = useProducts();
+
+  const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
 
   const stats = [
-    { label: "Produtos", value: "24", icon: Package, color: "text-blue-500" },
-    { label: "Pedidos", value: "156", icon: ShoppingCart, color: "text-green-500" },
-    { label: "Vendas", value: "R$ 12.450", icon: TrendingUp, color: "text-accent" },
+    { label: "Produtos", value: products.length.toString(), icon: Package, color: "text-blue-500" },
+    { label: "Total em Estoque", value: products.reduce((sum, p) => sum + p.stock, 0).toString(), icon: ShoppingCart, color: "text-green-500" },
+    { label: "Valor em Estoque", value: `R$ ${totalValue.toFixed(2)}`, icon: TrendingUp, color: "text-accent" },
   ];
 
   return (

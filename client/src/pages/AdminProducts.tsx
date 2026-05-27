@@ -3,48 +3,27 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus, Edit2, Trash2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  stock: number;
-  active: boolean;
-}
-
-const mockProducts: Product[] = [
-  {
-    id: 1,
-    name: "Caneca Personalizada Premium",
-    price: 49.90,
-    category: "Canecas",
-    stock: 15,
-    active: true,
-  },
-  {
-    id: 2,
-    name: "Camiseta Básica Personalizada",
-    price: 79.90,
-    category: "Camisetas",
-    stock: 8,
-    active: true,
-  },
-];
+import { useProducts } from "@/contexts/ProductsContext";
+import { toast } from "sonner";
 
 export default function AdminProducts() {
   const [, navigate] = useLocation();
+  const { products, deleteProduct } = useProducts();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredProducts = mockProducts.filter((product) =>
+  const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = (id: number) => {
-    if (confirm("Tem certeza que deseja deletar este produto?")) {
-      // TODO: Implement delete
-      alert("Produto deletado!");
+  const handleDelete = (id: string, name: string) => {
+    if (confirm(`Tem certeza que deseja deletar "${name}"?`)) {
+      deleteProduct(id);
+      toast.success("Produto deletado com sucesso!");
     }
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/admin/produtos/${id}/editar`);
   };
 
   return (
@@ -145,16 +124,16 @@ export default function AdminProducts() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() =>
-                            navigate(`/admin/produtos/${product.id}/editar`)
-                          }
+                          onClick={() => handleEdit(product.id)}
                           className="p-2 text-accent hover:bg-accent/10 rounded transition-colors"
+                          title="Editar produto"
                         >
                           <Edit2 className="w-5 h-5" />
                         </button>
                         <button
-                          onClick={() => handleDelete(product.id)}
+                          onClick={() => handleDelete(product.id, product.name)}
                           className="p-2 text-red-500 hover:bg-red-100 rounded transition-colors"
+                          title="Deletar produto"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -168,9 +147,33 @@ export default function AdminProducts() {
 
           {filteredProducts.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-foreground/60">Nenhum produto encontrado</p>
+              <p className="text-foreground/60">
+                {products.length === 0
+                  ? "Nenhum produto cadastrado. Clique em 'Novo Produto' para começar."
+                  : "Nenhum produto encontrado com esses critérios de busca."}
+              </p>
             </div>
           )}
+        </div>
+
+        {/* Stats */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-card border border-border rounded-lg p-4">
+            <p className="text-sm text-foreground/60">Total de Produtos</p>
+            <p className="text-3xl font-bold text-accent">{products.length}</p>
+          </div>
+          <div className="bg-card border border-border rounded-lg p-4">
+            <p className="text-sm text-foreground/60">Produtos Ativos</p>
+            <p className="text-3xl font-bold text-green-600">
+              {products.filter((p) => p.active).length}
+            </p>
+          </div>
+          <div className="bg-card border border-border rounded-lg p-4">
+            <p className="text-sm text-foreground/60">Total em Estoque</p>
+            <p className="text-3xl font-bold text-blue-600">
+              {products.reduce((sum, p) => sum + p.stock, 0)}
+            </p>
+          </div>
         </div>
       </div>
     </div>

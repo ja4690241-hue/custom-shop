@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/shop";
 import { ArrowLeft, ArrowRight, Search, SlidersHorizontal, Sparkles } from "lucide-react";
+import { useProducts } from "@/contexts/ProductsContext";
 
 const getInitialCategorySlug = () => {
   if (typeof window === "undefined") return "todos";
@@ -18,29 +18,39 @@ export default function Products() {
   const [selectedCategorySlug, setSelectedCategorySlug] = useState(getInitialCategorySlug);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
+  const { products, loading: isLoading } = useProducts();
 
-  const { data: categories = [] } = trpc.categories.list.useQuery();
+  // Extrair categorias únicas dos produtos
+  const categories = useMemo(() => {
+    const uniqueCategories = Array.from(new Set(products.map((p) => p.category)));
+    return uniqueCategories.map((name, idx) => ({
+      id: idx + 1,
+      name,
+      slug: name.toLowerCase().replace(/\s+/g, "-"),
+    }));
+  }, [products]);
+
   const selectedCategory = categories.find((category) => category.slug === selectedCategorySlug);
-  const { data: products = [], isLoading } = trpc.products.list.useQuery({
-    categoryId: selectedCategory?.id,
-    limit: 50,
-    offset: 0,
-  });
 
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    const searched = products.filter((product) => {
-      if (!normalizedQuery) return true;
-      return `${product.name} ${product.description ?? ""}`.toLowerCase().includes(normalizedQuery);
-    });
+    const searched = products
+      .filter((product) => product.active)
+      .filter((product) => {
+        if (selectedCategorySlug !== "todos" && product.category.toLowerCase().replace(/\s+/g, "-") !== selectedCategorySlug) {
+          return false;
+        }
+        if (!normalizedQuery) return true;
+        return `${product.name} ${product.description ?? ""}`.toLowerCase().includes(normalizedQuery);
+      });
 
     return [...searched].sort((a, b) => {
-      if (sort === "price-asc") return Number(a.price) - Number(b.price);
-      if (sort === "price-desc") return Number(b.price) - Number(a.price);
+      if (sort === "price-asc") return a.price - b.price;
+      if (sort === "price-desc") return b.price - a.price;
       if (sort === "stock") return b.stock - a.stock;
-      return a.id - b.id;
+      return 0;
     });
-  }, [products, query, sort]);
+  }, [products, query, sort, selectedCategorySlug]);
 
   const handleCategory = (slug: string) => {
     setSelectedCategorySlug(slug);
@@ -138,7 +148,7 @@ export default function Products() {
         ) : (
           <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredProducts.map((product, idx) => {
-              const category = categories.find((item) => item.id === product.categoryId);
+                  const category = categories.find((item) => item.name === product.category);
               return (
                 <button
                   key={product.id}
