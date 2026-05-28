@@ -15,13 +15,16 @@ import {
   Sparkles,
   Star,
   Truck,
+  Zap,
 } from "lucide-react";
 
 const benefits = [
-  { icon: Palette, title: "Preview sob medida", description: "Escolha texto, cor e tamanho antes de comprar." },
-  { icon: ShieldCheck, title: "Qualidade premium", description: "Materiais selecionados e acabamento profissional." },
-  { icon: Truck, title: "Frete grátis", description: "Em pedidos a partir de R$ 199,00." },
-  { icon: Clock, title: "Produção rápida", description: "Pedido preparado em até 3 dias úteis." },
+  { icon: Palette, title: "Personalização Completa", description: "Escolha cores, tamanhos e adicione seu texto personalizado." },
+  { icon: Zap, title: "IA para Sugestões", description: "Deixe a IA sugerir designs baseado no seu estilo." },
+  { icon: ShieldCheck, title: "Qualidade Premium", description: "Materiais selecionados e acabamento profissional." },
+  { icon: Truck, title: "Frete Rápido", description: "Entrega em até 7 dias úteis para todo Brasil." },
+  { icon: Clock, title: "Produção Rápida", description: "Seu pedido fica pronto em até 3 dias úteis." },
+  { icon: CheckCircle2, title: "Garantia Total", description: "Satisfação garantida ou seu dinheiro de volta." },
 ];
 
 export default function Home() {
@@ -32,44 +35,45 @@ export default function Home() {
   const { data: featuredProducts = [] } = trpc.products.featured.useQuery();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <nav className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-xl">
-        <div className="container flex max-w-7xl items-center justify-between py-4">
-          <button onClick={() => navigate("/")} className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent text-accent-foreground shadow-lg shadow-accent/20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 text-foreground">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 border-b border-slate-200/50 bg-white/80 backdrop-blur-xl shadow-sm">
+        <div className="container flex max-w-7xl items-center justify-between py-4 px-4">
+          <button onClick={() => navigate("/")} className="flex items-center gap-3 hover:opacity-80 transition">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-600/20">
               <Sparkles className="h-6 w-6" />
             </span>
             <span className="text-left">
-              <strong className="block text-xl tracking-tight">Custom Shop</strong>
-              <span className="hidden text-xs text-muted-foreground sm:block">Produtos únicos, feitos para você</span>
+              <strong className="block text-xl tracking-tight text-slate-900">Custom Shop</strong>
+              <span className="hidden text-xs text-slate-600 sm:block">Produtos únicos, feitos para você</span>
             </span>
           </button>
 
           <div className="hidden items-center gap-8 md:flex">
-            <button onClick={() => navigate("/produtos")} className="text-sm font-medium hover:text-accent">
+            <button onClick={() => navigate("/produtos")} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
               Catálogo
             </button>
-            <a href="#como-funciona" className="text-sm font-medium hover:text-accent">
-              Como funciona
+            <a href="#beneficios" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+              Por que escolher
             </a>
-            <a href="#destaques" className="text-sm font-medium hover:text-accent">
-              Mais vendidos
+            <a href="#destaques" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+              Destaques
             </a>
             {user?.role === "admin" && (
-              <button onClick={() => navigate("/admin")} className="text-sm font-medium hover:text-accent">
+              <button onClick={() => navigate("/admin")} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
                 Admin
               </button>
             )}
-            <button onClick={() => navigate("/pedidos")} className="text-sm font-medium hover:text-accent">
-              Pedidos
+            <button onClick={() => navigate("/pedidos")} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+              Meus Pedidos
             </button>
           </div>
 
-          <Button onClick={() => navigate("/carrinho")} className="relative rounded-full px-5">
+          <Button onClick={() => navigate("/carrinho")} className="relative rounded-full px-5 bg-blue-600 hover:bg-blue-700">
             <ShoppingBag className="mr-2 h-5 w-5" />
             Carrinho
             {itemCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-foreground px-1.5 text-xs font-bold text-background">
+              <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
                 {itemCount}
               </span>
             )}
@@ -78,70 +82,42 @@ export default function Home() {
       </nav>
 
       <main>
-        <section className="relative overflow-hidden border-b border-border/70">
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.22),transparent_34%),linear-gradient(135deg,rgba(17,24,39,0.04),transparent_40%)]" />
-          <div className="container grid max-w-7xl gap-12 py-16 lg:grid-cols-[1.08fr_0.92fr] lg:py-24">
-            <div className="flex flex-col justify-center animate-fade-in-up">
-              <Badge className="mb-6 w-fit rounded-full bg-accent/15 px-4 py-2 text-accent-foreground hover:bg-accent/20">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+          </div>
+
+          <div className="container grid max-w-7xl gap-12 py-20 lg:grid-cols-2 lg:py-32 px-4">
+            <div className="flex flex-col justify-center">
+              <Badge className="mb-6 w-fit rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 border-0">
                 <Star className="mr-2 h-4 w-4 fill-current" /> Loja de presentes personalizados
               </Badge>
-              <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-                Crie produtos personalizados com visual de marca premium.
+              <h1 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl text-slate-900">
+                Crie produtos únicos com sua marca
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-                Canecas, camisetas e kits feitos para presentear, divulgar sua empresa ou eternizar uma ideia. Escolha o produto, personalize no editor e revise tudo no carrinho.
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+                Personalize bonés, camisetas, moletons e muito mais. Nossa ferramenta com IA ajuda você a encontrar o estilo perfeito. Escolha, personalize, compre e receba em casa.
               </p>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base">
-                  Começar personalização
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base bg-blue-600 hover:bg-blue-700">
+                  Começar Personalização
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button onClick={() => navigate("/produtos")} size="lg" variant="outline" className="rounded-full px-8 text-base">
-                  Ver catálogo completo
+                <Button onClick={() => navigate("/produtos")} size="lg" variant="outline" className="rounded-full px-8 text-base border-slate-300 text-slate-900 hover:bg-slate-50">
+                  Ver Catálogo Completo
                 </Button>
               </div>
-              <div className="mt-10 grid max-w-xl grid-cols-3 gap-4 border-t border-border pt-6">
-                <div>
-                  <strong className="block text-3xl">4.9</strong>
-                  <span className="text-xs text-muted-foreground">avaliação média</span>
-                </div>
-                <div>
-                  <strong className="block text-3xl">3 dias</strong>
-                  <span className="text-xs text-muted-foreground">produção média</span>
-                </div>
-                <div>
-                  <strong className="block text-3xl">100%</strong>
-                  <span className="text-xs text-muted-foreground">feito sob pedido</span>
-                </div>
-              </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-xl animate-slide-in-right">
-              <div className="absolute -left-6 top-12 z-10 rounded-3xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur animate-scale-in" style={{animationDelay: '0.2s'}}>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Preview</p>
-                <p className="mt-1 text-sm font-bold">Texto + cor + tamanho</p>
-              </div>
-              <div className="rounded-[2.2rem] border border-border bg-card p-5 shadow-2xl shadow-accent/10 transition-smooth hover:shadow-accent/20">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-[1.7rem] bg-muted">
-                    <img
-                      src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85"
-                      alt="Camiseta personalizada"
-                      className="h-full w-full object-cover"
-                    />
-                    <span className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-background/90 px-5 py-2 text-sm font-black shadow-xl">
-                      SUA MARCA
-                    </span>
-                  </div>
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-[1.7rem] bg-muted sm:mt-12">
-                    <img
-                      src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=900&q=85"
-                      alt="Caneca personalizada"
-                      className="h-full w-full object-cover"
-                    />
-                    <span className="absolute left-6 top-8 rounded-2xl bg-accent px-4 py-2 text-sm font-black text-accent-foreground shadow-xl">
-                      Presente único
-                    </span>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl blur-2xl opacity-20" />
+              <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl p-8 shadow-xl">
+                <div className="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl flex items-center justify-center">
+                  <div className="text-center">
+                    <ShoppingBag className="h-24 w-24 text-blue-600 mx-auto mb-4 opacity-20" />
+                    <p className="text-slate-600 font-medium">Sua criação aqui</p>
                   </div>
                 </div>
               </div>
@@ -149,121 +125,152 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="como-funciona" className="border-b border-border/70 bg-secondary/40 py-12">
-          <div className="container grid max-w-7xl gap-4 md:grid-cols-4">
-            {benefits.map((benefit, idx) => (
-              <div key={benefit.title} className="rounded-3xl border border-border bg-card p-6 shadow-sm transition-smooth hover:shadow-lg hover:border-accent/50 hover:-translate-y-1" style={{animationDelay: `${idx * 0.1}s`}}>
-                <benefit.icon className="mb-4 h-7 w-7 text-accent transition-smooth group-hover:scale-110" />
-                <h2 className="text-xl font-bold">{benefit.title}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{benefit.description}</p>
+        {/* Categories Section */}
+        {categories.length > 0 && (
+          <section className="py-16 bg-white border-t border-slate-200">
+            <div className="container max-w-7xl px-4">
+              <h2 className="text-3xl font-bold text-slate-900 mb-12">Categorias</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => navigate(`/produtos?categoria=${cat.slug}`)}
+                    className="p-6 rounded-xl border border-slate-200 hover:border-blue-500 hover:shadow-lg transition text-left group"
+                  >
+                    <h3 className="font-semibold text-slate-900 group-hover:text-blue-600 transition">{cat.name}</h3>
+                    <p className="text-sm text-slate-600 mt-2">{cat.description}</p>
+                  </button>
+                ))}
               </div>
-            ))}
+            </div>
+          </section>
+        )}
+
+        {/* Benefits Section */}
+        <section id="beneficios" className="py-20 bg-gradient-to-b from-slate-50 to-white">
+          <div className="container max-w-7xl px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">Por que escolher a Custom Shop?</h2>
+              <p className="text-xl text-slate-600 max-w-2xl mx-auto">Oferecemos a melhor experiência de personalização com qualidade e rapidez</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {benefits.map((benefit, idx) => {
+                const Icon = benefit.icon;
+                return (
+                  <div key={idx} className="p-8 rounded-2xl border border-slate-200 hover:border-blue-500 hover:shadow-lg transition bg-white">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-lg bg-blue-100">
+                        <Icon className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-slate-900 mb-2">{benefit.title}</h3>
+                        <p className="text-slate-600 text-sm">{benefit.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
 
-        <section className="py-16">
-          <div className="container max-w-7xl">
-            <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.3em] text-accent">Categorias</p>
-                <h2 className="mt-3 text-4xl font-black">Escolha o tipo de criação</h2>
+        {/* Featured Products */}
+        {featuredProducts.length > 0 && (
+          <section id="destaques" className="py-20 bg-white border-t border-slate-200">
+            <div className="container max-w-7xl px-4">
+              <div className="flex items-center justify-between mb-12">
+                <div>
+                  <h2 className="text-4xl font-bold text-slate-900">Produtos em Destaque</h2>
+                  <p className="text-slate-600 mt-2">Confira nossos produtos mais populares</p>
+                </div>
+                <Button onClick={() => navigate("/produtos")} variant="outline" className="hidden sm:flex">
+                  Ver Todos
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
-              <Button onClick={() => navigate("/produtos")} variant="outline" className="rounded-full">
-                Ver todos
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {featuredProducts.slice(0, 4).map((product) => (
+                  <button
+                    key={product.id}
+                    onClick={() => navigate(`/produto/${product.id}`)}
+                    className="group rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-500 hover:shadow-xl transition bg-white"
+                  >
+                    <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden relative">
+                      {product.imageUrl ? (
+                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <ShoppingBag className="h-16 w-16 text-slate-300" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-slate-900 group-hover:text-blue-600 transition line-clamp-2">{product.name}</h3>
+                      <p className="text-2xl font-bold text-blue-600 mt-2">R$ {parseFloat(product.price).toFixed(2)}</p>
+                      <p className="text-sm text-slate-600 mt-1">{product.stock} em estoque</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <Button onClick={() => navigate("/produtos")} size="lg" className="w-full mt-8 rounded-full bg-blue-600 hover:bg-blue-700 sm:hidden">
+                Ver Todos os Produtos
               </Button>
             </div>
-            <div className="grid gap-5 md:grid-cols-3">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => navigate(`/produtos?categoria=${category.slug}`)}
-                  className="group rounded-[2rem] border border-border bg-card p-7 text-left shadow-sm transition hover:-translate-y-1 hover:border-accent hover:shadow-xl"
-                >
-                  <div className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-accent">
-                    <Sparkles className="h-7 w-7" />
-                  </div>
-                  <h3 className="text-2xl font-black">{category.name}</h3>
-                  <p className="mt-3 min-h-12 text-sm leading-6 text-muted-foreground">{category.description}</p>
-                  <span className="mt-7 inline-flex items-center text-sm font-bold text-accent">
-                    Explorar categoria <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" />
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
-        <section id="destaques" className="bg-foreground text-background py-16">
-          <div className="container max-w-7xl">
-            <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.3em] text-accent">Mais pedidos</p>
-                <h2 className="mt-3 text-4xl font-black">Produtos prontos para personalizar</h2>
-              </div>
-              <p className="max-w-lg text-sm leading-6 text-background/70">
-                Cards com preço, estoque e chamada clara para abrir o editor de customização, inspirado nas melhores práticas de e-commerce.
-              </p>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {featuredProducts.map((product) => (
-                <button
-                  key={product.id}
-                  onClick={() => navigate(`/produtos/${product.id}`)}
-                  className="group overflow-hidden rounded-[1.7rem] bg-background text-left text-foreground shadow-xl"
-                >
-                  <div className="relative aspect-square overflow-hidden bg-muted">
-                    <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
-                    <Badge className="absolute left-4 top-4 rounded-full">Personalizável</Badge>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="line-clamp-2 text-xl font-black">{product.name}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">Produção sob pedido</p>
-                    <div className="mt-5 flex items-center justify-between">
-                      <strong className="text-xl text-accent">{formatCurrency(Number(product.price))}</strong>
-                      <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="py-16">
-          <div className="container max-w-7xl">
-            <div className="rounded-[2rem] border border-border bg-card p-8 shadow-sm md:p-12">
-              <div className="grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-center">
-                <div>
-                  <p className="text-sm font-bold uppercase tracking-[0.3em] text-accent">Garantia de clareza</p>
-                  <h2 className="mt-3 text-4xl font-black">Você revisa a personalização antes de finalizar.</h2>
-                  <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">
-                    O carrinho guarda cada detalhe escolhido: texto, cor, tamanho, quantidade e preço final. Assim, a compra fica transparente do primeiro clique até a confirmação.
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  {["Preço atualizado em tempo real", "Resumo completo no checkout", "Histórico local de pedidos", "Design responsivo para celular"].map((item) => (
-                    <div key={item} className="flex items-center gap-3 rounded-2xl bg-secondary p-4">
-                      <CheckCircle2 className="h-5 w-5 text-accent" />
-                      <span className="font-semibold">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+        {/* CTA Section */}
+        <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-700">
+          <div className="container max-w-7xl px-4 text-center">
+            <h2 className="text-4xl font-bold text-white mb-4">Pronto para criar algo único?</h2>
+            <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
+              Escolha um produto, personalize com a ajuda da IA e receba em casa em poucos dias.
+            </p>
+            <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 bg-white text-blue-600 hover:bg-blue-50">
+              Começar Agora
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-border bg-secondary/40 py-10">
-        <div className="container flex max-w-7xl flex-col justify-between gap-6 md:flex-row md:items-center">
-          <div>
-            <strong className="text-xl">Custom Shop</strong>
-            <p className="mt-2 text-sm text-muted-foreground">Produtos personalizados com experiência premium de compra.</p>
+      {/* Footer */}
+      <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+        <div className="container max-w-7xl px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h3 className="font-semibold text-white mb-4">Custom Shop</h3>
+              <p className="text-sm">Produtos personalizados de qualidade premium</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Produtos</h4>
+              <ul className="space-y-2 text-sm">
+                <li><button onClick={() => navigate("/produtos?categoria=bones")} className="hover:text-white transition">Bonés</button></li>
+                <li><button onClick={() => navigate("/produtos?categoria=camisetas")} className="hover:text-white transition">Camisetas</button></li>
+                <li><button onClick={() => navigate("/produtos?categoria=moletons")} className="hover:text-white transition">Moletons</button></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Suporte</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="hover:text-white transition">Contato</a></li>
+                <li><a href="#" className="hover:text-white transition">FAQ</a></li>
+                <li><a href="#" className="hover:text-white transition">Políticas</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="hover:text-white transition">Termos</a></li>
+                <li><a href="#" className="hover:text-white transition">Privacidade</a></li>
+                <li><a href="#" className="hover:text-white transition">Cookies</a></li>
+              </ul>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <button onClick={() => navigate("/produtos")} className="hover:text-accent">Produtos</button>
-            <button onClick={() => navigate("/carrinho")} className="hover:text-accent">Carrinho</button>
-            <button onClick={() => navigate("/pedidos")} className="hover:text-accent">Pedidos</button>
+          <div className="border-t border-slate-800 pt-8 text-center text-sm">
+            <p>&copy; 2026 Custom Shop. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
