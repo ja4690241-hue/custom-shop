@@ -15,6 +15,10 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
 import AdminOrders from "./pages/AdminOrders";
+import AdminReports from "./pages/AdminReports";
+import About from "./pages/About";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
 
 function Router() {
   return (
@@ -30,6 +34,10 @@ function Router() {
       <Route path="/admin/produtos/novo" component={AdminProductForm} />
       <Route path="/admin/produtos/:id/editar" component={AdminProductForm} />
       <Route path="/admin/pedidos" component={AdminOrders} />
+      <Route path="/admin/relatorios" component={AdminReports} />
+      <Route path="/sobre" component={About} />
+      <Route path="/faq" component={FAQ} />
+      <Route path="/contato" component={Contact} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

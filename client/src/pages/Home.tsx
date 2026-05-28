@@ -255,9 +255,9 @@ export default function Home() {
             <div>
               <h4 className="font-semibold text-white mb-4">Suporte</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition">Contato</a></li>
-                <li><a href="#" className="hover:text-white transition">FAQ</a></li>
-                <li><a href="#" className="hover:text-white transition">Políticas</a></li>
+                <li><button onClick={() => navigate("/contato")} className="hover:text-white transition">Contato</button></li>
+                <li><button onClick={() => navigate("/faq")} className="hover:text-white transition">FAQ</button></li>
+                <li><button onClick={() => navigate("/sobre")} className="hover:text-white transition">Sobre</button></li>
               </ul>
             </div>
             <div>
