@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCartContext } from "@/contexts/CartContext";
 import { calculateShipping, formatCurrency, saveLocalOrder } from "@/lib/shop";
-import { ArrowLeft, CheckCircle2, CreditCard, PackageCheck, ShieldCheck } from "lucide-react";
+import { ArrowLeft, CheckCircle2, CreditCard, PackageCheck, ShieldCheck, QrCode, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Checkout() {
@@ -12,6 +12,9 @@ export default function Checkout() {
   const { items, total, itemCount, clearCart } = useCartContext();
   const shipping = calculateShipping(total);
   const grandTotal = total + shipping;
+  const [copied, setCopied] = useState(false);
+  const [showPix, setShowPix] = useState(false);
+  
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -23,13 +26,40 @@ export default function Checkout() {
     paymentMethod: "pix",
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.fullName.trim()) newErrors.fullName = "Nome é obrigatório";
+    if (!formData.email.trim()) newErrors.email = "E-mail é obrigatório";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "E-mail inválido";
+    if (!formData.phone.trim()) newErrors.phone = "Telefone é obrigatório";
+    if (!formData.address.trim()) newErrors.address = "Endereço é obrigatório";
+    if (!formData.city.trim()) newErrors.city = "Cidade é obrigatória";
+    if (!formData.state.trim() || formData.state.length !== 2) newErrors.state = "UF inválida";
+    if (!formData.zipCode.trim()) newErrors.zipCode = "CEP é obrigatório";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Limpar erro ao digitar
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!validateForm()) {
+      toast.error("Preencha todos os campos corretamente");
+      return;
+    }
 
     if (items.length === 0) {
       toast.error("Seu carrinho está vazio.");
@@ -66,113 +96,246 @@ export default function Checkout() {
     navigate("/pedidos");
   };
 
+  const pixKey = "12345678901234567890123456789012";
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=00020126580014br.gov.bcb.brcode0136${pixKey}520400005303986540510.005802BR5913CUSTOM%20SHOP6009SAO%20PAULO62410503***63041D3D`;
+
+  const copyPixKey = () => {
+    navigator.clipboard.writeText(pixKey);
+    setCopied(true);
+    toast.success("Chave PIX copiada!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (items.length === 0) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-6">
-        <div className="max-w-md rounded-[2rem] border border-border bg-card p-10 text-center shadow-sm">
-          <PackageCheck className="mx-auto mb-5 h-12 w-12 text-accent" />
-          <h1 className="text-3xl font-black">Nenhum item para finalizar</h1>
-          <p className="mt-3 text-muted-foreground">Adicione produtos personalizados ao carrinho antes de abrir o checkout.</p>
-          <Button onClick={() => navigate("/produtos")} className="mt-6 rounded-full">Ir para produtos</Button>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-white p-6">
+        <div className="max-w-md rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-lg">
+          <PackageCheck className="mx-auto mb-5 h-12 w-12 text-slate-400" />
+          <h1 className="text-3xl font-black text-slate-900">Carrinho vazio</h1>
+          <p className="mt-3 text-slate-600">Adicione produtos antes de finalizar a compra.</p>
+          <Button onClick={() => navigate("/produtos")} className="mt-6 rounded-full bg-blue-600 hover:bg-blue-700">Ir para produtos</Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl">
-        <div className="container flex max-w-7xl items-center justify-between py-4">
-          <button onClick={() => navigate("/carrinho")} className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-accent">
-            <ArrowLeft className="h-4 w-4" /> Voltar ao carrinho
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-xl shadow-sm">
+        <div className="container flex max-w-7xl items-center justify-between py-4 px-4">
+          <button onClick={() => navigate("/carrinho")} className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition">
+            <ArrowLeft className="h-4 w-4" /> Voltar
           </button>
-          <div className="hidden items-center gap-2 text-sm font-semibold text-muted-foreground sm:flex">
-            <ShieldCheck className="h-4 w-4 text-accent" /> Checkout seguro e revisável
+          <div className="hidden items-center gap-2 text-sm font-semibold text-slate-600 sm:flex">
+            <ShieldCheck className="h-4 w-4 text-blue-600" /> Checkout seguro
           </div>
         </div>
       </header>
 
-      <main className="container max-w-7xl py-10">
+      <main className="container max-w-7xl py-10 px-4">
         <div className="mb-8">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-accent">Finalização</p>
-          <h1 className="mt-3 text-5xl font-black tracking-tight">Confirme seu pedido.</h1>
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
-            Preencha seus dados e revise o resumo. Este checkout registra o pedido localmente para protótipo e demonstração.
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-blue-600">Finalização</p>
+          <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-900">Confirme seu pedido</h1>
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">
+            Preencha seus dados e escolha a forma de pagamento.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1fr_390px]">
+        <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1fr_400px]">
           <div className="space-y-6">
-            <section className="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
-              <h2 className="text-3xl font-black">Dados pessoais</h2>
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <Input name="fullName" placeholder="Nome completo" value={formData.fullName} onChange={handleChange} required className="h-12 rounded-2xl" />
-                <Input name="email" type="email" placeholder="E-mail" value={formData.email} onChange={handleChange} required className="h-12 rounded-2xl" />
-                <Input name="phone" placeholder="Telefone" value={formData.phone} onChange={handleChange} required className="h-12 rounded-2xl md:col-span-2" />
-              </div>
-            </section>
-
-            <section className="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
-              <h2 className="text-3xl font-black">Endereço de entrega</h2>
-              <div className="mt-6 grid gap-4">
-                <Input name="address" placeholder="Rua, número e complemento" value={formData.address} onChange={handleChange} required className="h-12 rounded-2xl" />
-                <div className="grid gap-4 md:grid-cols-[1fr_120px_180px]">
-                  <Input name="city" placeholder="Cidade" value={formData.city} onChange={handleChange} required className="h-12 rounded-2xl" />
-                  <Input name="state" placeholder="UF" value={formData.state} onChange={handleChange} required maxLength={2} className="h-12 rounded-2xl uppercase" />
-                  <Input name="zipCode" placeholder="CEP" value={formData.zipCode} onChange={handleChange} required className="h-12 rounded-2xl" />
+            {/* Dados Pessoais */}
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+              <h2 className="text-2xl font-black text-slate-900 mb-6">Dados pessoais</h2>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Input 
+                    name="fullName" 
+                    placeholder="Nome completo" 
+                    value={formData.fullName} 
+                    onChange={handleChange} 
+                    className={`h-12 rounded-lg border-slate-300 ${errors.fullName ? "border-red-500" : ""}`}
+                  />
+                  {errors.fullName && <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>}
+                </div>
+                <div>
+                  <Input 
+                    name="email" 
+                    type="email" 
+                    placeholder="E-mail" 
+                    value={formData.email} 
+                    onChange={handleChange}
+                    className={`h-12 rounded-lg border-slate-300 ${errors.email ? "border-red-500" : ""}`}
+                  />
+                  {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
+                </div>
+                <div className="md:col-span-2">
+                  <Input 
+                    name="phone" 
+                    placeholder="(11) 99999-9999" 
+                    value={formData.phone} 
+                    onChange={handleChange}
+                    className={`h-12 rounded-lg border-slate-300 ${errors.phone ? "border-red-500" : ""}`}
+                  />
+                  {errors.phone && <p className="text-xs text-red-600 mt-1">{errors.phone}</p>}
                 </div>
               </div>
             </section>
 
-            <section className="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
-              <h2 className="text-3xl font-black">Pagamento</h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Para evitar dados sensíveis em ambiente de demonstração, o site não coleta número de cartão. Integrações reais podem ser adicionadas depois com gateway seguro.
-              </p>
-              <label className="mt-5 block text-sm font-bold">Método preferido</label>
-              <select
-                name="paymentMethod"
-                value={formData.paymentMethod}
-                onChange={handleChange}
-                className="mt-2 h-12 w-full rounded-2xl border border-input bg-background px-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-ring"
-              >
-                <option value="pix">Pix na confirmação</option>
-                <option value="card-link">Link de cartão enviado por e-mail</option>
-                <option value="whatsapp">Combinar pelo WhatsApp</option>
-              </select>
+            {/* Endereço */}
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+              <h2 className="text-2xl font-black text-slate-900 mb-6">Endereço de entrega</h2>
+              <div className="space-y-4">
+                <div>
+                  <Input 
+                    name="address" 
+                    placeholder="Rua, número e complemento" 
+                    value={formData.address} 
+                    onChange={handleChange}
+                    className={`h-12 rounded-lg border-slate-300 ${errors.address ? "border-red-500" : ""}`}
+                  />
+                  {errors.address && <p className="text-xs text-red-600 mt-1">{errors.address}</p>}
+                </div>
+                <div className="grid gap-4 md:grid-cols-[1fr_120px_140px]">
+                  <div>
+                    <Input 
+                      name="city" 
+                      placeholder="Cidade" 
+                      value={formData.city} 
+                      onChange={handleChange}
+                      className={`h-12 rounded-lg border-slate-300 ${errors.city ? "border-red-500" : ""}`}
+                    />
+                    {errors.city && <p className="text-xs text-red-600 mt-1">{errors.city}</p>}
+                  </div>
+                  <div>
+                    <Input 
+                      name="state" 
+                      placeholder="SP" 
+                      value={formData.state} 
+                      onChange={handleChange}
+                      maxLength={2}
+                      className={`h-12 rounded-lg border-slate-300 uppercase ${errors.state ? "border-red-500" : ""}`}
+                    />
+                    {errors.state && <p className="text-xs text-red-600 mt-1">{errors.state}</p>}
+                  </div>
+                  <div>
+                    <Input 
+                      name="zipCode" 
+                      placeholder="12345-678" 
+                      value={formData.zipCode} 
+                      onChange={handleChange}
+                      className={`h-12 rounded-lg border-slate-300 ${errors.zipCode ? "border-red-500" : ""}`}
+                    />
+                    {errors.zipCode && <p className="text-xs text-red-600 mt-1">{errors.zipCode}</p>}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Pagamento */}
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+              <h2 className="text-2xl font-black text-slate-900 mb-6">Método de pagamento</h2>
+              <div className="space-y-3">
+                {[
+                  { value: "pix", label: "PIX (Recomendado)", desc: "Instantâneo e seguro" },
+                  { value: "card", label: "Cartão de Crédito", desc: "Parcelado em até 12x" },
+                  { value: "boleto", label: "Boleto", desc: "Vencimento em 3 dias" },
+                ].map((method) => (
+                  <label key={method.value} className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition ${
+                    formData.paymentMethod === method.value
+                      ? "border-blue-600 bg-blue-50"
+                      : "border-slate-200 hover:border-slate-300"
+                  }`}>
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value={method.value} 
+                      checked={formData.paymentMethod === method.value} 
+                      onChange={handleChange}
+                      className="h-4 w-4"
+                    />
+                    <div>
+                      <p className="font-semibold text-slate-900">{method.label}</p>
+                      <p className="text-xs text-slate-600">{method.desc}</p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+
+              {/* PIX Details */}
+              {formData.paymentMethod === "pix" && !showPix && (
+                <Button
+                  type="button"
+                  onClick={() => setShowPix(true)}
+                  variant="outline"
+                  className="w-full mt-4 border-blue-300 text-blue-600 hover:bg-blue-50"
+                >
+                  <QrCode className="mr-2 h-4 w-4" />
+                  Ver QR Code PIX
+                </Button>
+              )}
+
+              {formData.paymentMethod === "pix" && showPix && (
+                <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
+                  <p className="text-sm font-semibold text-slate-900 mb-3">Dados para pagamento PIX:</p>
+                  <div className="flex gap-2 mb-3">
+                    <Input value={pixKey} readOnly className="text-xs font-mono bg-white border-slate-300" />
+                    <Button
+                      type="button"
+                      onClick={copyPixKey}
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  <img src={qrCodeUrl} alt="QR Code PIX" className="w-48 h-48 mx-auto rounded-lg" />
+                </div>
+              )}
             </section>
           </div>
 
-          <aside className="h-fit rounded-[2rem] border border-border bg-card p-6 shadow-sm lg:sticky lg:top-24">
-            <h2 className="text-3xl font-black">Resumo</h2>
-            <div className="mt-6 space-y-4 border-b border-border pb-6">
+          {/* Resumo */}
+          <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-6 shadow-lg lg:sticky lg:top-24">
+            <h2 className="text-2xl font-black text-slate-900 mb-6">Resumo</h2>
+            <div className="space-y-3 border-b border-slate-200 pb-6">
               {items.map((item) => (
                 <div key={item.id} className="flex gap-3">
-                  <img src={item.image} alt={item.productName} className="h-16 w-16 rounded-2xl object-cover" />
+                  <img src={item.image} alt={item.productName} className="h-16 w-16 rounded-lg object-cover" />
                   <div className="flex-1">
-                    <p className="font-bold leading-tight">{item.productName}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{item.quantity} un. · {item.customization.text || "Sem texto"}</p>
+                    <p className="font-bold text-slate-900 text-sm leading-tight">{item.productName}</p>
+                    <p className="mt-1 text-xs text-slate-600">{item.quantity}x · {item.customization.text || "Sem texto"}</p>
                   </div>
-                  <strong className="text-sm">{formatCurrency(item.price * item.quantity)}</strong>
+                  <strong className="text-sm text-slate-900">{formatCurrency(item.price * item.quantity)}</strong>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 space-y-3 border-b border-border pb-6 text-sm">
-              <div className="flex justify-between"><span>Itens</span><strong>{itemCount}</strong></div>
-              <div className="flex justify-between"><span>Subtotal</span><strong>{formatCurrency(total)}</strong></div>
-              <div className="flex justify-between"><span>Frete</span><strong>{shipping === 0 ? "Grátis" : formatCurrency(shipping)}</strong></div>
-            </div>
-            <div className="mt-6 flex items-center justify-between font-black">
-              <span>Total</span>
-              <span className="text-3xl text-accent">{formatCurrency(grandTotal)}</span>
+            <div className="mt-6 space-y-3 border-b border-slate-200 pb-6 text-sm">
+              <div className="flex justify-between text-slate-600">
+                <span>Itens</span>
+                <strong className="text-slate-900">{itemCount}</strong>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Subtotal</span>
+                <strong className="text-slate-900">{formatCurrency(total)}</strong>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Frete</span>
+                <strong className="text-slate-900">{shipping === 0 ? "Grátis" : formatCurrency(shipping)}</strong>
+              </div>
             </div>
 
-            <Button type="submit" className="mt-6 h-14 w-full rounded-full text-base font-black">
+            <div className="mt-6 flex items-center justify-between font-black mb-6">
+              <span className="text-slate-900">Total</span>
+              <span className="text-3xl text-blue-600">{formatCurrency(grandTotal)}</span>
+            </div>
+
+            <Button type="submit" className="w-full h-12 rounded-lg text-base font-black bg-blue-600 hover:bg-blue-700">
               <CreditCard className="mr-2 h-5 w-5" /> Confirmar pedido
             </Button>
-            <div className="mt-5 rounded-2xl bg-secondary p-4 text-sm leading-6 text-muted-foreground">
-              <p className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" /> Ao confirmar, o pedido aparece em “Meus pedidos” com todos os itens personalizados.</p>
+
+            <div className="mt-4 rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-900">
+              <p className="flex gap-2"><CheckCircle2 className="h-4 w-4 flex-shrink-0 mt-0.5" /> Pedido seguro e protegido</p>
             </div>
           </aside>
         </form>
