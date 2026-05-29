@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useRoute } from "wouter";
-import { trpc } from "@/lib/trpc";
 import { useCartContext } from "@/contexts/CartContext";
+import { useProducts } from "@/contexts/ProductsContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatCurrency, getColorLabel, parseJsonArray } from "@/lib/shop";
+import { formatCurrency, getColorLabel } from "@/lib/shop";
 import { ArrowLeft, CheckCircle2, Minus, Plus, RotateCcw, ShoppingBag, Sparkles, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
@@ -22,20 +22,24 @@ const calculateCustomizationPrice = (text: string, color: string, size: string) 
 export default function ProductDetail() {
   const [, navigate] = useLocation();
   const [, params] = useRoute("/produtos/:id");
-  const productId = params?.id ? Number.parseInt(params.id, 10) : undefined;
+  const productId = params?.id;
 
   const { addItem } = useCartContext();
+  const { products, loading: isLoading } = useProducts();
+  
+  const product = useMemo(() => {
+    if (!productId) return undefined;
+    return products.find(p => p.id === productId);
+  }, [products, productId]);
+
   const [quantity, setQuantity] = useState(1);
   const [customText, setCustomText] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
 
-  const { data: product, isLoading } = trpc.products.getById.useQuery(productId || 0, {
-    enabled: Boolean(productId),
-  });
+  const availableColors = useMemo(() => product?.colors || [], [product?.colors]);
+  const availableSizes = useMemo(() => product?.sizes || [], [product?.sizes]);
 
-  const availableColors = useMemo(() => parseJsonArray(product?.availableColors), [product?.availableColors]);
-  const availableSizes = useMemo(() => parseJsonArray(product?.availableSizes), [product?.availableSizes]);
   useEffect(() => {
     if (!selectedColor && availableColors.length > 0) {
       setSelectedColor(availableColors[0]);
@@ -81,7 +85,7 @@ export default function ProductDetail() {
 
     addItem({
       id: nanoid(),
-      productId: product.id,
+      productId: Number(product.id), // Mantendo compatibilidade com tipo number do carrinho se necessário
       productName: product.name,
       price: unitPrice,
       quantity,
