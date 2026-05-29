@@ -57,6 +57,14 @@ export default function Cart() {
                       <span><strong className="text-foreground">Cor:</strong> {getColorLabel(item.customization.color)}</span>
                       <span><strong className="text-foreground">Tamanho:</strong> {item.customization.size || "Único"}</span>
                       <span><strong className="text-foreground">Unitário:</strong> {formatCurrency(item.price)}</span>
+                      {item.customization.customImage && (
+                        <div className="col-span-full mt-2 flex items-center gap-2">
+                          <strong className="text-foreground">Sua imagem:</strong>
+                          <div className="h-10 w-10 overflow-hidden rounded-lg border border-border">
+                            <img src={item.customization.customImage} alt="Custom" className="h-full w-full object-cover" />
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className="mt-5 flex flex-wrap items-center gap-3">
                       <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="flex h-10 w-10 items-center justify-center rounded-xl border border-border transition-smooth hover:border-accent hover:bg-secondary" type="button">

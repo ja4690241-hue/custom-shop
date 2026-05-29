@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, getColorLabel } from "@/lib/shop";
-import { ArrowLeft, CheckCircle2, Minus, Plus, RotateCcw, ShoppingBag, Sparkles, Truck } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Minus, Plus, RotateCcw, ShoppingBag, Sparkles, Truck, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 
@@ -36,6 +36,7 @@ export default function ProductDetail() {
   const [customText, setCustomText] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
+  const [customImage, setCustomImage] = useState<string>("");
 
   const availableColors = useMemo(() => product?.colors || [], [product?.colors]);
   const availableSizes = useMemo(() => product?.sizes || [], [product?.sizes]);
@@ -62,7 +63,24 @@ export default function ProductDetail() {
     setCustomText("");
     setSelectedColor("");
     setSelectedSize("");
+    setCustomImage("");
     setQuantity(1);
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("A imagem deve ter no máximo 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCustomImage(reader.result as string);
+        toast.success("Imagem carregada com sucesso!");
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleAddToCart = () => {
@@ -93,6 +111,7 @@ export default function ProductDetail() {
         text: customText.trim() || undefined,
         color: selectedColor || undefined,
         size: selectedSize || undefined,
+        customImage: customImage || undefined,
       },
       image: product.imageUrl,
     });
@@ -158,6 +177,11 @@ export default function ProductDetail() {
                         {customText.trim() || "Seu texto aqui"}
                       </p>
                     </div>
+                    {customImage && (
+                      <div className="h-12 w-12 overflow-hidden rounded-lg border-2 border-white/50 shadow-sm">
+                        <img src={customImage} alt="Custom" className="h-full w-full object-cover" />
+                      </div>
+                    )}
                     <Badge className="rounded-full bg-accent text-accent-foreground animate-pulse">Ao vivo</Badge>
                   </div>
                 </div>
@@ -259,6 +283,43 @@ export default function ProductDetail() {
                     </div>
                   </div>
                 )}
+
+                <div>
+                  <label className="mb-3 block text-sm font-bold">Sua logo ou foto</label>
+                  {!customImage ? (
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+                      />
+                      <div className="flex h-24 items-center justify-center rounded-2xl border-2 border-dashed border-border transition-colors hover:border-accent hover:bg-accent/5">
+                        <div className="text-center">
+                          <Upload className="mx-auto h-6 w-6 text-muted-foreground" />
+                          <p className="mt-2 text-sm text-muted-foreground">Clique para enviar imagem</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative flex h-24 w-full items-center gap-4 rounded-2xl border border-border bg-muted/30 p-3">
+                      <div className="h-16 w-16 overflow-hidden rounded-xl border border-border">
+                        <img src={customImage} alt="Preview" className="h-full w-full object-cover" />
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <p className="text-sm font-semibold truncate">Imagem carregada</p>
+                        <p className="text-xs text-muted-foreground">Será enviada com o pedido</p>
+                      </div>
+                      <button
+                        onClick={() => setCustomImage("")}
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
+                  <p className="mt-2 text-xs text-muted-foreground">Formatos aceitos: JPG, PNG. Máximo 5MB.</p>
+                </div>
 
                 <div>
                   <label className="mb-3 block text-sm font-bold">Quantidade</label>
