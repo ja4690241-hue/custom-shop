@@ -27,7 +27,7 @@ const ProductsContext = createContext<ProductsContextType | undefined>(undefined
 
 const STORAGE_KEY = "custom_shop_products";
 
-// Produtos padrão de demonstração
+// Produtos padrão de demonstração com URLs de imagem corrigidas
 const DEFAULT_PRODUCTS: Product[] = [
   {
     id: "1",
@@ -35,7 +35,7 @@ const DEFAULT_PRODUCTS: Product[] = [
     description: "Caneca de cerâmica de alta qualidade com acabamento premium. Perfeita para presentes e personalização.",
     price: 49.90,
     category: "Canecas",
-    imageUrl: "https://images.unsplash.com/photo-1514432324607-2e467f4af445?w=500&h=500&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=800&q=80",
     stock: 25,
     colors: ["#000000", "#FFFFFF", "#FF0000", "#0000FF"],
     sizes: ["Único"],
@@ -48,7 +48,7 @@ const DEFAULT_PRODUCTS: Product[] = [
     description: "Camiseta 100% algodão com impressão de alta qualidade. Confortável e durável.",
     price: 79.90,
     category: "Camisetas",
-    imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
     stock: 30,
     colors: ["#000000", "#FFFFFF", "#FF0000", "#0000FF"],
     sizes: ["P", "M", "G", "GG"],
@@ -61,7 +61,7 @@ const DEFAULT_PRODUCTS: Product[] = [
     description: "Kit completo com caneca, camiseta e acessórios. Ideal para presentes especiais.",
     price: 129.90,
     category: "Kits",
-    imageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500&h=500&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1521302080334-4bebac2763a6?auto=format&fit=crop&w=800&q=80",
     stock: 15,
     colors: ["#000000", "#FFFFFF"],
     sizes: ["Único"],
@@ -79,7 +79,18 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        setProducts(JSON.parse(stored));
+        let parsed = JSON.parse(stored);
+        
+        // CORREÇÃO: Forçar a atualização das URLs de imagem se forem as antigas/quebradas
+        const updated = parsed.map((p: Product) => {
+          const defaultProd = DEFAULT_PRODUCTS.find(d => d.id === p.id);
+          if (defaultProd && (p.imageUrl.includes("unsplash.com/photo-1514432324607") || p.imageUrl.includes("unsplash.com/photo-1513364776144"))) {
+            return { ...p, imageUrl: defaultProd.imageUrl };
+          }
+          return p;
+        });
+        
+        setProducts(updated);
       } else {
         // Se não houver produtos salvos, usar os padrões
         setProducts(DEFAULT_PRODUCTS);
