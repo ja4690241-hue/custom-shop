@@ -16,6 +16,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
 import AdminOrders from "./pages/AdminOrders";
 import AdminReports from "./pages/AdminReports";
+import AdminCategories from "./pages/AdminCategories";
 import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/admin/produtos/novo" component={AdminProductForm} />
       <Route path="/admin/produtos/:id/editar" component={AdminProductForm} />
       <Route path="/admin/pedidos" component={AdminOrders} />
+      <Route path="/admin/categorias" component={AdminCategories} />
       <Route path="/admin/relatorios" component={AdminReports} />
       <Route path="/sobre" component={About} />
       <Route path="/faq" component={FAQ} />
