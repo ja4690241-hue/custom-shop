@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCartContext } from "@/contexts/CartContext";
 import { calculateShipping, formatCurrency, saveLocalOrder } from "@/lib/shop";
-import { ArrowLeft, CheckCircle2, CreditCard, PackageCheck, ShieldCheck, QrCode, Copy, Check } from "lucide-react";
+import { ArrowLeft, CheckCircle2, CreditCard, PackageCheck, ShieldCheck, QrCode, Copy, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { PixPayment } from "@/components/PixPayment";
 
 export default function Checkout() {
   const [, navigate] = useLocation();
@@ -14,6 +15,8 @@ export default function Checkout() {
   const grandTotal = total + shipping;
   const [copied, setCopied] = useState(false);
   const [showPix, setShowPix] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [confirmedOrder, setConfirmedOrder] = useState<any>(null);
   
   const [formData, setFormData] = useState({
     fullName: "",
@@ -90,10 +93,23 @@ export default function Checkout() {
       paymentMethod: formData.paymentMethod,
     };
 
-    saveLocalOrder(order);
-    clearCart();
-    toast.success(`Pedido ${order.number} confirmado com sucesso.`);
-    navigate("/pedidos");
+    if (formData.paymentMethod === "pix" && !showPix) {
+      setConfirmedOrder(order);
+      setShowPix(true);
+      toast.info("Gere o QR Code para pagar via PIX");
+      return;
+    }
+
+    setIsProcessing(true);
+    
+    // Simular processamento
+    setTimeout(() => {
+      saveLocalOrder(order);
+      clearCart();
+      setIsProcessing(false);
+      toast.success(`Pedido ${order.number} confirmado com sucesso.`);
+      navigate("/pedidos");
+    }, 2000);
   };
 
   const pixKey = "12345678901234567890123456789012";
@@ -262,33 +278,26 @@ export default function Checkout() {
               </div>
 
               {/* PIX Details */}
-              {formData.paymentMethod === "pix" && !showPix && (
-                <Button
-                  type="button"
-                  onClick={() => setShowPix(true)}
-                  variant="outline"
-                  className="w-full mt-4 border-blue-300 text-blue-600 hover:bg-blue-50"
-                >
-                  <QrCode className="mr-2 h-4 w-4" />
-                  Ver QR Code PIX
-                </Button>
-              )}
-
-              {formData.paymentMethod === "pix" && showPix && (
-                <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
-                  <p className="text-sm font-semibold text-slate-900 mb-3">Dados para pagamento PIX:</p>
-                  <div className="flex gap-2 mb-3">
-                    <Input value={pixKey} readOnly className="text-xs font-mono bg-white border-slate-300" />
-                    <Button
-                      type="button"
-                      onClick={copyPixKey}
-                      size="sm"
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                  <img src={qrCodeUrl} alt="QR Code PIX" className="w-48 h-48 mx-auto rounded-lg" />
+              {formData.paymentMethod === "pix" && showPix && confirmedOrder && (
+                <div className="mt-6">
+                  <PixPayment 
+                    amount={grandTotal} 
+                    orderId={confirmedOrder.number}
+                    customerName={formData.fullName}
+                    customerEmail={formData.email}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      saveLocalOrder(confirmedOrder);
+                      clearCart();
+                      toast.success("Pagamento confirmado!");
+                      navigate("/pedidos");
+                    }}
+                    className="w-full mt-4 h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl"
+                  >
+                    Já realizei o pagamento
+                  </Button>
                 </div>
               )}
             </section>
@@ -330,8 +339,18 @@ export default function Checkout() {
               <span className="text-3xl text-blue-600">{formatCurrency(grandTotal)}</span>
             </div>
 
-            <Button type="submit" className="w-full h-12 rounded-lg text-base font-black bg-blue-600 hover:bg-blue-700">
-              <CreditCard className="mr-2 h-5 w-5" /> Confirmar pedido
+            <Button 
+              type="submit" 
+              disabled={isProcessing || (formData.paymentMethod === "pix" && showPix)}
+              className="w-full h-12 rounded-lg text-base font-black bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20"
+            >
+              {isProcessing ? (
+                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processando...</>
+              ) : formData.paymentMethod === "pix" && !showPix ? (
+                "Gerar PIX e Confirmar"
+              ) : (
+                "Confirmar pedido"
+              )}
             </Button>
 
             <div className="mt-4 rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-900">
