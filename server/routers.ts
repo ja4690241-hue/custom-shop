@@ -13,6 +13,7 @@ import {
   getOrderItems
 } from "./db";
 import { z } from "zod";
+import { createPixPayment } from "./mercadopago";
 
 export const appRouter = router({
   system: systemRouter,
@@ -84,6 +85,26 @@ export const appRouter = router({
       .input(z.number())
       .query(async ({ input }) => {
         return getOrderItems(input);
+      }),
+
+    createPayment: publicProcedure
+      .input(z.object({
+        amount: z.number(),
+        description: z.string(),
+        email: z.string().email(),
+        firstName: z.string(),
+        lastName: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        return createPixPayment({
+          transaction_amount: input.amount,
+          description: input.description,
+          payer: {
+            email: input.email,
+            first_name: input.firstName,
+            last_name: input.lastName,
+          }
+        });
       }),
   }),
 });

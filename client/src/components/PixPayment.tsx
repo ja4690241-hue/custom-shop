@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { QrCode, Copy, Check, Clock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/shop";
+import { trpc } from "@/lib/trpc";
 
 interface PixPaymentProps {
   amount: number;
@@ -16,6 +17,35 @@ interface PixPaymentProps {
 export function PixPayment({ amount, orderId, customerName, customerEmail, onPaymentConfirmed }: PixPaymentProps) {
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState(1800); // 30 minutos em segundos
+  const [pixData, setPixData] = useState<{qrCode: string, id: string} | null>(null);
+
+  const createPayment = trpc.orders.createPayment.useMutation({
+    onSuccess: (data: any) => {
+      setPixData({
+        qrCode: data.point_of_interaction.transaction_data.qr_code,
+        id: data.id
+      });
+    },
+    onError: () => {
+      toast.error("Erro ao gerar pagamento PIX real. Usando modo de simulação.");
+      // Fallback para simulação se a API falhar (ex: sem token)
+      setPixData({
+        qrCode: "00020126580014br.gov.bcb.brcode013665712a38bc93cb5326d64d23fa2d5204000053039865405" + amount.toFixed(2) + "5802BR5913CUSTOM%20SHOP6009SAO%20PAULO62410503***63041D3D",
+        id: "simulated_" + Date.now()
+      });
+    }
+  });
+
+  useEffect(() => {
+    const [firstName, ...lastNameParts] = customerName.split(" ");
+    createPayment.mutate({
+      amount,
+      description: `Pedido ${orderId} - Custom Shop`,
+      email: customerEmail,
+      firstName: firstName || "Cliente",
+      lastName: lastNameParts.join(" ") || "Custom Shop",
+    });
+  }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) return;
@@ -31,18 +61,17 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, onPay
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Dados bancários reais do usuário
   const bankData = {
     bank: "Nu Pagamentos S.A.",
     agency: "0001",
     account: "68014024-6"
   };
 
-  // Simulação de payload PIX (Copia e Cola) - Idealmente seria uma chave PIX real
-  const pixKey = "00020126580014br.gov.bcb.brcode013665712a38bc93cb5326d64d23fa2d5204000053039865405" + amount.toFixed(2) + "5802BR5913CUSTOM%20SHOP6009SAO%20PAULO62410503***63041D3D";
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixKey)}`;
+  const pixKey = pixData?.qrCode || "";
+  const qrCodeUrl = pixKey ? `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixKey)}` : "";
 
   const copyPixPayload = () => {
+    if (!pixKey) return;
     navigator.clipboard.writeText(pixKey);
     setCopied(true);
     toast.success("Código PIX Copia e Cola copiado!");
@@ -68,15 +97,26 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, onPay
       </div>
 
       <div className="flex flex-col items-center gap-6">
-        <div className="relative p-4 bg-white rounded-2xl shadow-sm border border-blue-100">
-          <img 
-            src={qrCodeUrl} 
-            alt="QR Code PIX" 
-            className="w-48 h-48 rounded-lg"
-          />
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-white/80 rounded-2xl">
-            <p className="text-xs font-bold text-blue-600 text-center px-4">Escaneie com o app do seu banco</p>
-          </div>
+        <div className="relative p-4 bg-white rounded-2xl shadow-sm border border-blue-100 min-h-[200px] min-w-[200px] flex items-center justify-center">
+          {createPayment.isPending ? (
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+              <p className="text-[10px] font-bold text-blue-600">Gerando QR Code...</p>
+            </div>
+          ) : qrCodeUrl ? (
+            <>
+              <img 
+                src={qrCodeUrl} 
+                alt="QR Code PIX" 
+                className="w-48 h-48 rounded-lg"
+              />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-white/80 rounded-2xl">
+                <p className="text-xs font-bold text-blue-600 text-center px-4">Escaneie com o app do seu banco</p>
+              </div>
+            </>
+          ) : (
+            <p className="text-xs text-red-500">Erro ao carregar QR Code</p>
+          )}
         </div>
 
         <div className="w-full space-y-3">
@@ -95,6 +135,7 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, onPay
             <Button
               type="button"
               onClick={copyPixPayload}
+              disabled={!pixKey}
               className="h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all active:scale-95"
             >
               {copied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
@@ -132,7 +173,7 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, onPay
 
           <div className="flex items-center gap-2 p-3 bg-white/50 rounded-xl border border-blue-100 text-[10px] text-slate-500">
             <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
-            Pagamento processado de forma segura. Após o pagamento, seu pedido será processado automaticamente.
+            Pagamento processado via Mercado Pago. Após o pagamento, seu pedido será processado automaticamente.
           </div>
         </div>
       </div>
