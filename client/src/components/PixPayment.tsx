@@ -31,7 +31,14 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, onPay
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Simulação de payload PIX (Copia e Cola)
+  // Dados bancários reais do usuário
+  const bankData = {
+    bank: "Nu Pagamentos S.A.",
+    agency: "0001",
+    account: "68014024-6"
+  };
+
+  // Simulação de payload PIX (Copia e Cola) - Idealmente seria uma chave PIX real
   const pixKey = "00020126580014br.gov.bcb.brcode013665712a38bc93cb5326d64d23fa2d5204000053039865405" + amount.toFixed(2) + "5802BR5913CUSTOM%20SHOP6009SAO%20PAULO62410503***63041D3D";
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixKey)}`;
 
@@ -105,6 +112,24 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, onPay
             <span className="text-xl font-black text-blue-600">{formatCurrency(amount)}</span>
           </div>
           
+          <div className="rounded-xl bg-white p-4 border border-blue-100 space-y-2">
+            <p className="text-[10px] font-bold text-slate-400 uppercase">Dados para conferência:</p>
+            <div className="grid grid-cols-2 gap-2 text-[10px]">
+              <div>
+                <span className="text-slate-500">Banco:</span>
+                <p className="font-bold text-slate-900">{bankData.bank}</p>
+              </div>
+              <div>
+                <span className="text-slate-500">Agência:</span>
+                <p className="font-bold text-slate-900">{bankData.agency}</p>
+              </div>
+              <div className="col-span-2">
+                <span className="text-slate-500">Conta:</span>
+                <p className="font-bold text-slate-900">{bankData.account}</p>
+              </div>
+            </div>
+          </div>
+
           <div className="flex items-center gap-2 p-3 bg-white/50 rounded-xl border border-blue-100 text-[10px] text-slate-500">
             <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
             Pagamento processado de forma segura. Após o pagamento, seu pedido será processado automaticamente.

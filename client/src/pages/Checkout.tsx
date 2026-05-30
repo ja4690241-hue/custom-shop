@@ -253,6 +253,7 @@ export default function Checkout() {
               <div className="space-y-3">
                 {[
                   { value: "pix", label: "PIX (Recomendado)", desc: "Instantâneo e seguro" },
+                  { value: "transfer", label: "Transferência Bancária", desc: "Direto para sua conta" },
                   { value: "card", label: "Cartão de Crédito", desc: "Parcelado em até 12x" },
                   { value: "boleto", label: "Boleto", desc: "Vencimento em 3 dias" },
                 ].map((method) => (
@@ -276,6 +277,34 @@ export default function Checkout() {
                   </label>
                 ))}
               </div>
+
+              {/* Transferência Bancária */}
+              {formData.paymentMethod === "transfer" && (
+                <div className="mt-6 p-4 rounded-lg bg-emerald-50 border border-emerald-200">
+                  <p className="text-sm font-semibold text-slate-900 mb-4">Dados para Transferência Bancária:</p>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-slate-600">Banco:</span>
+                      <span className="font-bold text-slate-900">Nu Pagamentos S.A. (Nubank)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-600">Agência:</span>
+                      <span className="font-bold text-slate-900">0001</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-600">Conta:</span>
+                      <span className="font-bold text-slate-900">68014024-6</span>
+                    </div>
+                    <div className="flex justify-between pt-3 border-t border-emerald-200">
+                      <span className="text-slate-600">Valor:</span>
+                      <span className="text-lg font-bold text-emerald-600">{formatCurrency(grandTotal)}</span>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-xs text-emerald-700 bg-white/50 p-3 rounded-lg">
+                    ⚠️ Após realizar a transferência, clique em "Confirmar pedido" para finalizar sua compra. Seu pedido será processado assim que recebermos o pagamento.
+                  </p>
+                </div>
+              )}
 
               {/* PIX Details */}
               {formData.paymentMethod === "pix" && showPix && confirmedOrder && (
