@@ -22,7 +22,10 @@ export default function Checkout() {
     fullName: "",
     email: "",
     phone: "",
-    address: "",
+    street: "",
+    number: "",
+    neighborhood: "",
+    complement: "",
     city: "",
     state: "",
     zipCode: "",
@@ -39,7 +42,9 @@ export default function Checkout() {
     if (!formData.email.trim()) newErrors.email = "E-mail é obrigatório";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Formato de e-mail inválido";
     if (!formData.phone.trim()) newErrors.phone = "Telefone de contato é obrigatório";
-    if (!formData.address.trim()) newErrors.address = "Endereço completo (Rua e Número) é obrigatório";
+    if (!formData.street.trim()) newErrors.street = "Nome da rua/avenida é obrigatório";
+    if (!formData.number.trim()) newErrors.number = "Número é obrigatório";
+    if (!formData.neighborhood.trim()) newErrors.neighborhood = "Bairro é obrigatório";
     if (!formData.city.trim()) newErrors.city = "Cidade é obrigatória";
     if (!formData.state.trim() || formData.state.length !== 2) newErrors.state = "Estado (UF) é obrigatório (2 letras)";
     if (!formData.zipCode.trim()) newErrors.zipCode = "CEP é obrigatório";
@@ -57,6 +62,42 @@ export default function Checkout() {
     // Limpar erro ao digitar
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleCepBlur = async () => {
+    const cep = formData.zipCode.replace(/\D/g, "");
+    if (cep.length !== 8) return;
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await response.json();
+
+      if (!data.erro) {
+        setFormData((prev) => ({
+          ...prev,
+          street: data.logradouro || prev.street,
+          neighborhood: data.bairro || prev.neighborhood,
+          city: data.localidade || prev.city,
+          state: data.uf || prev.state,
+        }));
+        
+        // Limpar erros dos campos preenchidos
+        setErrors((prev) => ({
+          ...prev,
+          street: "",
+          neighborhood: "",
+          city: "",
+          state: "",
+          zipCode: "",
+        }));
+        
+        toast.success("Endereço preenchido automaticamente!");
+      } else {
+        setErrors((prev) => ({ ...prev, zipCode: "CEP não encontrado" }));
+      }
+    } catch (error) {
+      console.error("Erro ao buscar CEP:", error);
     }
   };
 
@@ -85,10 +126,14 @@ export default function Checkout() {
         phone: formData.phone,
       },
       shippingAddress: {
-        address: formData.address,
+        street: formData.street,
+        number: formData.number,
+        neighborhood: formData.neighborhood,
+        complement: formData.complement,
         city: formData.city,
         state: formData.state.toUpperCase(),
         zipCode: formData.zipCode,
+        fullAddress: `${formData.street}, ${formData.number}${formData.complement ? ` - ${formData.complement}` : ""} - ${formData.neighborhood}`,
       },
       cpf: formData.cpf,
       items,
@@ -218,17 +263,69 @@ export default function Checkout() {
             <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
               <h2 className="text-2xl font-black text-slate-900 mb-6">Endereço de entrega</h2>
               <div className="space-y-4">
-                <div>
-                  <Input 
-                    name="address" 
-                    placeholder="Rua, número e complemento" 
-                    value={formData.address} 
-                    onChange={handleChange}
-                    className={`h-12 rounded-lg border-slate-300 ${errors.address ? "border-red-500" : ""}`}
-                  />
-                  {errors.address && <p className="text-xs text-red-600 mt-1">{errors.address}</p>}
+                <div className="grid gap-4 md:grid-cols-[140px_1fr]">
+                  <div>
+                    <Input 
+                      name="zipCode" 
+                      placeholder="CEP" 
+                      value={formData.zipCode} 
+                      onChange={handleChange}
+                      onBlur={handleCepBlur}
+                      className={`h-12 rounded-lg border-slate-300 ${errors.zipCode ? "border-red-500" : ""}`}
+                    />
+                    {errors.zipCode && <p className="text-xs text-red-600 mt-1">{errors.zipCode}</p>}
+                  </div>
+                  <div className="flex items-center text-[10px] text-slate-500">
+                    Digite o CEP para preencher o endereço automaticamente.
+                  </div>
                 </div>
-                <div className="grid gap-4 md:grid-cols-[1fr_120px_140px]">
+
+                <div className="grid gap-4 md:grid-cols-[1fr_100px]">
+                  <div>
+                    <Input 
+                      name="street" 
+                      placeholder="Rua / Avenida" 
+                      value={formData.street} 
+                      onChange={handleChange}
+                      className={`h-12 rounded-lg border-slate-300 ${errors.street ? "border-red-500" : ""}`}
+                    />
+                    {errors.street && <p className="text-xs text-red-600 mt-1">{errors.street}</p>}
+                  </div>
+                  <div>
+                    <Input 
+                      name="number" 
+                      placeholder="Número" 
+                      value={formData.number} 
+                      onChange={handleChange}
+                      className={`h-12 rounded-lg border-slate-300 ${errors.number ? "border-red-500" : ""}`}
+                    />
+                    {errors.number && <p className="text-xs text-red-600 mt-1">{errors.number}</p>}
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Input 
+                      name="neighborhood" 
+                      placeholder="Bairro" 
+                      value={formData.neighborhood} 
+                      onChange={handleChange}
+                      className={`h-12 rounded-lg border-slate-300 ${errors.neighborhood ? "border-red-500" : ""}`}
+                    />
+                    {errors.neighborhood && <p className="text-xs text-red-600 mt-1">{errors.neighborhood}</p>}
+                  </div>
+                  <div>
+                    <Input 
+                      name="complement" 
+                      placeholder="Complemento (opcional)" 
+                      value={formData.complement} 
+                      onChange={handleChange}
+                      className="h-12 rounded-lg border-slate-300"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-[1fr_100px]">
                   <div>
                     <Input 
                       name="city" 
@@ -242,23 +339,13 @@ export default function Checkout() {
                   <div>
                     <Input 
                       name="state" 
-                      placeholder="SP" 
+                      placeholder="UF" 
                       value={formData.state} 
                       onChange={handleChange}
                       maxLength={2}
                       className={`h-12 rounded-lg border-slate-300 uppercase ${errors.state ? "border-red-500" : ""}`}
                     />
                     {errors.state && <p className="text-xs text-red-600 mt-1">{errors.state}</p>}
-                  </div>
-                  <div>
-                    <Input 
-                      name="zipCode" 
-                      placeholder="12345-678" 
-                      value={formData.zipCode} 
-                      onChange={handleChange}
-                      className={`h-12 rounded-lg border-slate-300 ${errors.zipCode ? "border-red-500" : ""}`}
-                    />
-                    {errors.zipCode && <p className="text-xs text-red-600 mt-1">{errors.zipCode}</p>}
                   </div>
                 </div>
               </div>
