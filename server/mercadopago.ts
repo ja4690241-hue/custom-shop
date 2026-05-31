@@ -48,14 +48,26 @@ export async function createPixPayment(data: {
       }
     };
 
-    console.log('Enviando requisição ao Mercado Pago:', JSON.stringify({ ...body, payer: { ...body.payer, email: '***' } }));
+    console.log('Enviando via Fetch direto para API do Mercado Pago...');
+    
+    const response = await fetch('https://api.mercadopago.com/v1/payments', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${MP_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+        'X-Idempotency-Key': `pix-${Date.now()}`
+      },
+      body: JSON.stringify(body)
+    });
 
-    console.log('Enviando payload completo:', JSON.stringify(body, null, 2));
+    const result = await response.json();
 
-    const result = await payment.create({ body });
+    if (!response.ok) {
+      console.error('Erro na resposta da API do Mercado Pago:', JSON.stringify(result, null, 2));
+      throw new Error(result.message || 'Erro ao criar pagamento no Mercado Pago');
+    }
 
-    console.log('Sucesso ao criar pagamento no Mercado Pago. ID:', result.id);
-
+    console.log('Sucesso ao criar pagamento (Fetch). ID:', result.id);
     return result;
   } catch (error: any) {
     console.error('ERRO CRÍTICO AO CRIAR PAGAMENTO NO MERCADO PAGO:');
