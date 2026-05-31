@@ -13,7 +13,7 @@ import {
   getOrderItems
 } from "./db";
 import { z } from "zod";
-import { createPixPayment } from "./mercadopago";
+import { createPixPayment, mercadoPagoPublicKey } from "./mercadopago";
 
 export const appRouter = router({
   system: systemRouter,
@@ -86,6 +86,10 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return getOrderItems(input);
       }),
+
+    getPublicKey: publicProcedure.query(() => {
+      return { publicKey: mercadoPagoPublicKey };
+    }),
 
     createPayment: publicProcedure
       .input(z.object({

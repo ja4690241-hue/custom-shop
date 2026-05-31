@@ -1,8 +1,10 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 
-// O Access Token deve ser configurado nas variáveis de ambiente do Vercel
-// Credenciais de teste fornecidas pelo usuário
-const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN || 'TEST-4045448063917433-053109-4eb41dd6fbbd589981ae529c741d7f85-746685437';
+// Credenciais do Mercado Pago
+// Public Key: APP_USR-5a64239c-6718-4d20-9654-93d3eae30dc6
+// Client ID: 75899114462674
+const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN || 'APP_USR-75899114462674-053112-4ec2dd26ba31c276fe6aae055234158d-746685437';
+const MP_PUBLIC_KEY = process.env.MP_PUBLIC_KEY || 'APP_USR-5a64239c-6718-4d20-9654-93d3eae30dc6';
 
 const client = new MercadoPagoConfig({ 
   accessToken: MP_ACCESS_TOKEN,
@@ -10,6 +12,8 @@ const client = new MercadoPagoConfig({
 });
 
 const payment = new Payment(client);
+
+export const mercadoPagoPublicKey = MP_PUBLIC_KEY;
 
 export async function createPixPayment(data: {
   transaction_amount: number;
