@@ -35,15 +35,17 @@ export default function Checkout() {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.fullName.trim()) newErrors.fullName = "Nome é obrigatório";
+    if (!formData.fullName.trim()) newErrors.fullName = "Nome completo é obrigatório";
     if (!formData.email.trim()) newErrors.email = "E-mail é obrigatório";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "E-mail inválido";
-    if (!formData.phone.trim()) newErrors.phone = "Telefone é obrigatório";
-    if (!formData.address.trim()) newErrors.address = "Endereço é obrigatório";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Formato de e-mail inválido";
+    if (!formData.phone.trim()) newErrors.phone = "Telefone de contato é obrigatório";
+    if (!formData.address.trim()) newErrors.address = "Endereço completo (Rua e Número) é obrigatório";
     if (!formData.city.trim()) newErrors.city = "Cidade é obrigatória";
-    if (!formData.state.trim() || formData.state.length !== 2) newErrors.state = "UF inválida";
+    if (!formData.state.trim() || formData.state.length !== 2) newErrors.state = "Estado (UF) é obrigatório (2 letras)";
     if (!formData.zipCode.trim()) newErrors.zipCode = "CEP é obrigatório";
-    if (formData.paymentMethod === "pix" && !formData.cpf.trim()) newErrors.cpf = "CPF é obrigatório para PIX";
+    // CPF obrigatório para todos os métodos para garantir consistência com Mercado Pago
+    if (!formData.cpf.trim()) newErrors.cpf = "CPF é obrigatório para processar o pedido";
+    else if (formData.cpf.replace(/\D/g, '').length !== 11) newErrors.cpf = "CPF deve conter 11 dígitos";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -197,19 +199,18 @@ export default function Checkout() {
                   />
                   {errors.phone && <p className="text-xs text-red-600 mt-1">{errors.phone}</p>}
                 </div>
-                {formData.paymentMethod === "pix" && (
-                  <div className="md:col-span-2">
-                    <Input 
-                      name="cpf" 
-                      placeholder="CPF (apenas números)" 
-                      value={formData.cpf} 
-                      onChange={handleChange}
-                      className={`h-12 rounded-lg border-slate-300 ${errors.cpf ? "border-red-500" : ""}`}
-                    />
-                    {errors.cpf && <p className="text-xs text-red-600 mt-1">{errors.cpf}</p>}
-                    <p className="text-[10px] text-slate-500 mt-1">O CPF é obrigatório para gerar o QR Code do Mercado Pago.</p>
-                  </div>
-                )}
+                <div className="md:col-span-2">
+                  <Input 
+                    name="cpf" 
+                    placeholder="CPF (apenas números)" 
+                    value={formData.cpf} 
+                    onChange={handleChange}
+                    maxLength={14}
+                    className={`h-12 rounded-lg border-slate-300 ${errors.cpf ? "border-red-500" : ""}`}
+                  />
+                  {errors.cpf && <p className="text-xs text-red-600 mt-1">{errors.cpf}</p>}
+                  <p className="text-[10px] text-slate-500 mt-1">O CPF é obrigatório para a emissão do pagamento e segurança da transação.</p>
+                </div>
               </div>
             </section>
 
