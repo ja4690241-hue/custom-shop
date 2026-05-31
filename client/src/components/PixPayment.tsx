@@ -22,10 +22,20 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, custo
 
   const createPayment = trpc.orders.createPayment.useMutation({
     onSuccess: (data: any) => {
-      setPixData({
-        qrCode: data.point_of_interaction.transaction_data.qr_code,
-        id: data.id
-      });
+      console.log("Resposta do Mercado Pago recebida:", data);
+      const qrCode = data.point_of_interaction?.transaction_data?.qr_code || 
+                     data.transaction_data?.qr_code || 
+                     data.qr_code;
+      
+      if (qrCode) {
+        setPixData({
+          qrCode: qrCode,
+          id: data.id
+        });
+      } else {
+        console.error("QR Code não encontrado na resposta:", data);
+        toast.error("Erro ao obter código PIX da resposta.");
+      }
     },
     onError: (error: any) => {
       console.error("Erro tRPC ao criar pagamento:", error);
