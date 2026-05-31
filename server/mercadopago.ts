@@ -35,23 +35,17 @@ export async function createPixPayment(data: {
     // O Mercado Pago exige que o transaction_amount seja um número com no máximo 2 casas decimais
     const body = {
       transaction_amount: Number(data.transaction_amount.toFixed(2)),
-      description: data.description.substring(0, 60), // Limite de 60 caracteres
+      description: data.description.substring(0, 60),
       payment_method_id: 'pix',
       payer: {
         email: data.payer.email,
         first_name: data.payer.first_name,
         last_name: data.payer.last_name,
-        // O Mercado Pago muitas vezes exige identificação (CPF/CNPJ) para PIX em produção
-        ...(data.payer.identification?.number ? {
-          identification: {
-            type: data.payer.identification.type || 'CPF',
-            number: data.payer.identification.number.replace(/\D/g, '') // Remove pontos/traços
-          }
-        } : {})
-      },
-      // Configurações adicionais para garantir validade do QR Code
-      installments: 1,
-      notification_url: undefined, // Pode ser configurado futuramente
+        identification: {
+          type: 'CPF',
+          number: data.payer.identification?.number.replace(/\D/g, '') || '00000000000'
+        }
+      }
     };
 
     console.log('Enviando requisição ao Mercado Pago:', JSON.stringify({ ...body, payer: { ...body.payer, email: '***' } }));
