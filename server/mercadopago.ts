@@ -27,25 +27,9 @@ export async function createPixPayment(data: {
   }
 }) {
   try {
-    // Se não houver token, retorna simulação (para desenvolvimento local sem .env)
-    if (!process.env.MP_ACCESS_TOKEN && (!MP_ACCESS_TOKEN || MP_ACCESS_TOKEN.includes('YOUR_ACCESS_TOKEN'))) {
-      console.warn('Mercado Pago Access Token não configurado ou inválido. Usando modo de simulação.');
-      const amountStr = data.transaction_amount.toFixed(2);
-      const amountLen = amountStr.length.toString().padStart(2, '0');
-      const simulatedPix = `00020126580014br.gov.bcb.brcode013665712a38bc93cb5326d64d23fa2d520400005303986${amountLen}${amountStr}5802BR5913CUSTOM%20SHOP6009SAO%20PAULO62410503***63041D3D`;
-      
-      return {
-        id: 'simulated_' + Date.now(),
-        status: 'pending',
-        point_of_interaction: {
-          transaction_data: {
-            qr_code: simulatedPix,
-            qr_code_base64: '',
-            ticket_url: '#'
-          }
-        }
-      };
-    }
+    // Log para verificar se o token está presente (sem mostrar o token completo por segurança)
+    console.log('Iniciando criação de pagamento Pix...');
+    console.log('Token configurado:', MP_ACCESS_TOKEN ? `Sim (Inicia com ${MP_ACCESS_TOKEN.substring(0, 15)}...)` : 'Não');
 
     // Configuração do pagamento Pix
     // O Mercado Pago exige que o transaction_amount seja um número com no máximo 2 casas decimais
@@ -72,13 +56,18 @@ export async function createPixPayment(data: {
 
     console.log('Enviando requisição ao Mercado Pago:', JSON.stringify({ ...body, payer: { ...body.payer, email: '***' } }));
 
+    console.log('Enviando payload completo:', JSON.stringify(body, null, 2));
+
     const result = await payment.create({ body });
+
+    console.log('Sucesso ao criar pagamento no Mercado Pago. ID:', result.id);
 
     return result;
   } catch (error: any) {
-    console.error('Erro detalhado do Mercado Pago:', error.message || error);
+    console.error('ERRO CRÍTICO AO CRIAR PAGAMENTO NO MERCADO PAGO:');
+    console.error('Mensagem:', error.message || error);
     if (error.cause) {
-      console.error('Causa do erro:', JSON.stringify(error.cause));
+      console.error('Detalhes técnicos (cause):', JSON.stringify(error.cause, null, 2));
     }
     throw error;
   }
