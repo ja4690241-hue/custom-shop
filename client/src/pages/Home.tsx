@@ -94,14 +94,14 @@ export default function Home() {
               <Badge className="mb-6 w-fit rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 border-0">
                 <Star className="mr-2 h-4 w-4 fill-current" /> Loja de presentes personalizados
               </Badge>
-              <h1 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl text-slate-900">
-                Crie produtos únicos com sua marca
+              <h1 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl text-slate-900 animate-fade-in-up">
+                Crie produtos <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">únicos</span> com sua marca
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 animate-fade-in-up [animation-delay:200ms]">
                 Personalize bonés, camisetas, moletons e muito mais. Nossa ferramenta com IA ajuda você a encontrar o estilo perfeito. Escolha, personalize, compre e receba em casa.
               </p>
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-                <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base bg-blue-600 hover:bg-blue-700">
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row animate-fade-in-up [animation-delay:400ms]">
+                <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base bg-blue-600 hover:bg-blue-700 btn-hover-lift">
                   Começar Personalização
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -113,12 +113,25 @@ export default function Home() {
 
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl blur-2xl opacity-20" />
-              <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl p-8 shadow-xl">
-                <div className="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl flex items-center justify-center">
-                  <div className="text-center">
-                    <ShoppingBag className="h-24 w-24 text-blue-600 mx-auto mb-4 opacity-20" />
-                    <p className="text-slate-600 font-medium">Sua criação aqui</p>
+              <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl p-8 shadow-xl animate-scale-in">
+                <div className="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl flex items-center justify-center overflow-hidden">
+                  <div className="text-center group">
+                    <div className="relative">
+                      <ShoppingBag className="h-32 w-32 text-blue-600 mx-auto mb-4 opacity-20 group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Sparkles className="h-12 w-12 text-blue-500 animate-pulse" />
+                      </div>
+                    </div>
+                    <p className="text-slate-600 font-black text-xl tracking-tight">Sua criação aqui</p>
+                    <p className="text-slate-400 text-sm">Personalize com IA</p>
                   </div>
+                </div>
+                {/* Floating elements for visual flair */}
+                <div className="absolute -top-6 -right-6 h-20 w-20 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-bounce [animation-duration:3s]">
+                  <Palette className="h-10 w-10 text-blue-600" />
+                </div>
+                <div className="absolute -bottom-6 -left-6 h-16 w-16 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-bounce [animation-duration:4s] [animation-delay:1s]">
+                  <Star className="h-8 w-8 text-amber-400 fill-amber-400" />
                 </div>
               </div>
             </div>

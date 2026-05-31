@@ -1,3 +1,25 @@
+# 🎨 Custom Shop - Premium Personalization
+
+Um e-commerce moderno e elegante para produtos personalizados, integrado com Inteligência Artificial para sugestões de design e processamento de pagamentos via Mercado Pago.
+
+## 🚀 Tecnologias
+
+- **Frontend:** React + Vite + TailwindCSS + Lucide React
+- **Backend:** Node.js + Express + tRPC
+- **Banco de Dados:** MySQL/TiDB com Drizzle ORM
+- **Pagamentos:** Mercado Pago (PIX)
+- **Implantação:** Vercel
+
+## ⚙️ Configuração para Vercel
+
+Para implantar este projeto no Vercel, configure as seguintes variáveis de ambiente:
+
+1. `DATABASE_URL`: URL de conexão com seu banco MySQL/TiDB.
+2. `MP_ACCESS_TOKEN`: Seu Access Token do Mercado Pago.
+3. `MP_PUBLIC_KEY`: Sua Public Key do Mercado Pago.
+
+---
+
 # Web App Template (tRPC + Manus Auth + Database)
 
 This template gives you a React 19 + Tailwind 4 + Express 4 + tRPC 11 stack with Manus OAuth already wired. Procedures are your contracts, types flow end to end, and authentication "just works".
