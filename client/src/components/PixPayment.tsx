@@ -11,10 +11,11 @@ interface PixPaymentProps {
   orderId: string;
   customerName: string;
   customerEmail: string;
+  customerCpf?: string;
   onPaymentConfirmed?: () => void;
 }
 
-export function PixPayment({ amount, orderId, customerName, customerEmail, onPaymentConfirmed }: PixPaymentProps) {
+export function PixPayment({ amount, orderId, customerName, customerEmail, customerCpf, onPaymentConfirmed }: PixPaymentProps) {
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState(1800); // 30 minutos em segundos
   const [pixData, setPixData] = useState<{qrCode: string, id: string} | null>(null);
@@ -49,6 +50,7 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, onPay
       email: customerEmail,
       firstName: firstName || "Cliente",
       lastName: lastNameParts.join(" ") || "Custom Shop",
+      cpf: customerCpf,
     });
   }, []);
 

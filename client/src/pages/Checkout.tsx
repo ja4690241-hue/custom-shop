@@ -26,6 +26,7 @@ export default function Checkout() {
     city: "",
     state: "",
     zipCode: "",
+    cpf: "",
     paymentMethod: "pix",
   });
 
@@ -42,6 +43,7 @@ export default function Checkout() {
     if (!formData.city.trim()) newErrors.city = "Cidade é obrigatória";
     if (!formData.state.trim() || formData.state.length !== 2) newErrors.state = "UF inválida";
     if (!formData.zipCode.trim()) newErrors.zipCode = "CEP é obrigatório";
+    if (formData.paymentMethod === "pix" && !formData.cpf.trim()) newErrors.cpf = "CPF é obrigatório para PIX";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -86,6 +88,7 @@ export default function Checkout() {
         state: formData.state.toUpperCase(),
         zipCode: formData.zipCode,
       },
+      cpf: formData.cpf,
       items,
       subtotal: total,
       shipping,
@@ -194,6 +197,19 @@ export default function Checkout() {
                   />
                   {errors.phone && <p className="text-xs text-red-600 mt-1">{errors.phone}</p>}
                 </div>
+                {formData.paymentMethod === "pix" && (
+                  <div className="md:col-span-2">
+                    <Input 
+                      name="cpf" 
+                      placeholder="CPF (apenas números)" 
+                      value={formData.cpf} 
+                      onChange={handleChange}
+                      className={`h-12 rounded-lg border-slate-300 ${errors.cpf ? "border-red-500" : ""}`}
+                    />
+                    {errors.cpf && <p className="text-xs text-red-600 mt-1">{errors.cpf}</p>}
+                    <p className="text-[10px] text-slate-500 mt-1">O CPF é obrigatório para gerar o QR Code do Mercado Pago.</p>
+                  </div>
+                )}
               </div>
             </section>
 
@@ -314,6 +330,7 @@ export default function Checkout() {
                     orderId={confirmedOrder.number}
                     customerName={formData.fullName}
                     customerEmail={formData.email}
+                    customerCpf={formData.cpf}
                   />
                   <Button
                     type="button"

@@ -98,6 +98,7 @@ export const appRouter = router({
         email: z.string().email(),
         firstName: z.string(),
         lastName: z.string(),
+        cpf: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         return createPixPayment({
@@ -107,6 +108,12 @@ export const appRouter = router({
             email: input.email,
             first_name: input.firstName,
             last_name: input.lastName,
+            ...(input.cpf ? {
+              identification: {
+                type: 'CPF',
+                number: input.cpf
+              }
+            } : {})
           }
         });
       }),
