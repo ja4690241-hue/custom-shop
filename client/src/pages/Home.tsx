@@ -27,8 +27,6 @@ const benefits = [
   { icon: CheckCircle2, title: "Garantia Total", description: "Satisfação garantida ou seu dinheiro de volta." },
 ];
 
-const googleColors = ["#2563eb", "#dc2626", "#eab308", "#16a34a"];
-
 export default function Home() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
@@ -52,30 +50,30 @@ export default function Home() {
           </button>
 
           <div className="hidden items-center gap-8 md:flex">
-            <button onClick={() => navigate("/produtos")} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+            <button onClick={() => navigate("/produtos")} className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
               Catálogo
             </button>
-            <a href="#beneficios" className="text-sm font-medium text-slate-700 hover:text-red-600 transition">
+            <a href="#beneficios" className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
               Por que escolher
             </a>
-            <a href="#destaques" className="text-sm font-medium text-slate-700 hover:text-yellow-600 transition">
+            <a href="#destaques" className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
               Destaques
             </a>
             {user?.role === "admin" && (
-              <button onClick={() => navigate("/admin")} className="text-sm font-medium text-slate-700 hover:text-green-600 transition">
+              <button onClick={() => navigate("/admin")} className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
                 Admin
               </button>
             )}
-            <button onClick={() => navigate("/pedidos")} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+            <button onClick={() => navigate("/pedidos")} className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
               Meus Pedidos
             </button>
           </div>
 
-          <Button onClick={() => navigate("/carrinho")} className="relative rounded-full px-5 bg-gradient-to-r from-blue-600 via-red-600 to-yellow-600 hover:opacity-90 text-white border-0">
+          <Button onClick={() => navigate("/carrinho")} className="relative rounded-full px-5 bg-purple-600 hover:bg-purple-700">
             <ShoppingBag className="mr-2 h-5 w-5" />
             Carrinho
             {itemCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-green-600 px-1.5 text-xs font-bold text-white">
+              <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
                 {itemCount}
               </span>
             )}
@@ -87,27 +85,24 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 -z-10">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-red-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-            <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
           </div>
 
           <div className="container grid max-w-7xl gap-12 py-20 lg:grid-cols-2 lg:py-32 px-4">
             <div className="flex flex-col justify-center">
-              <Badge className="mb-6 w-fit rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 border-0">
+              <Badge className="mb-6 w-fit rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 border-0">
                 <Star className="mr-2 h-4 w-4 fill-current" /> Impacto Profundo
               </Badge>
               <h1 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl text-slate-900">
-                FAÇA <span className="text-red-600">DIFERENTE</span>
+                FAÇA <span className="text-purple-600">DIFERENTE</span>
               </h1>
-              <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-blue-600 via-red-600 to-yellow-600 bg-clip-text text-transparent">
-                COMPRE COM A GENTE
-              </p>
+              <p className="mt-4 text-3xl font-bold text-purple-600">COMPRE COM A GENTE</p>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
                 Personalize bonés, camisetas, moletons e muito mais. Nossa ferramenta com IA ajuda você a encontrar o estilo perfeito. Escolha, personalize, compre e receba em casa.
               </p>
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-                <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base bg-gradient-to-r from-blue-600 to-red-600 hover:opacity-90 text-white border-0">
+                <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base bg-purple-600 hover:bg-purple-700">
                   Começar Personalização
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -118,11 +113,11 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-red-400 to-yellow-400 rounded-2xl blur-2xl opacity-20" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-2xl blur-2xl opacity-20" />
               <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl p-8 shadow-xl">
-                <div className="aspect-square bg-gradient-to-br from-blue-50 via-red-50 to-yellow-50 rounded-2xl flex items-center justify-center">
+                <div className="aspect-square bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl flex items-center justify-center">
                   <div className="text-center">
-                    <ShoppingBag className="h-24 w-24 text-blue-600 mx-auto mb-4 opacity-20" />
+                    <ShoppingBag className="h-24 w-24 text-purple-600 mx-auto mb-4 opacity-20" />
                     <p className="text-slate-600 font-medium">Sua criação aqui</p>
                   </div>
                 </div>
@@ -137,18 +132,13 @@ export default function Home() {
             <div className="container max-w-7xl px-4">
               <h2 className="text-3xl font-bold text-slate-900 mb-12">Categorias</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {categories.map((cat, idx) => (
+                {categories.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => navigate(`/produtos?categoria=${cat.slug}`)}
-                    className="p-6 rounded-xl border-2 transition text-left group"
-                    style={{
-                      borderColor: googleColors[idx % 4],
-                    }}
+                    className="p-6 rounded-xl border border-slate-200 hover:border-purple-500 hover:shadow-lg transition text-left group"
                   >
-                    <h3 className="font-semibold text-slate-900 transition" style={{color: googleColors[idx % 4]}}>
-                      {cat.name}
-                    </h3>
+                    <h3 className="font-semibold text-slate-900 group-hover:text-purple-600 transition">{cat.name}</h3>
                     <p className="text-sm text-slate-600 mt-2">{cat.description}</p>
                   </button>
                 ))}
@@ -161,24 +151,17 @@ export default function Home() {
         <section id="beneficios" className="py-20 bg-gradient-to-b from-slate-50 to-white">
           <div className="container max-w-7xl px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-slate-900 mb-4">
-                Por que escolher <span style={{color: "#2563eb"}}>Impacto</span> <span style={{color: "#dc2626"}}>Profundo</span>?
-              </h2>
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">Por que escolher Impacto Profundo?</h2>
               <p className="text-xl text-slate-600 max-w-2xl mx-auto">Oferecemos a melhor experiência de personalização com qualidade e rapidez</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {benefits.map((benefit, idx) => {
                 const Icon = benefit.icon;
-                const color = googleColors[idx % 4];
                 return (
-                  <div
-                    key={idx}
-                    className="p-8 rounded-2xl border-2 transition bg-white hover:shadow-lg"
-                    style={{borderColor: color}}
-                  >
+                  <div key={idx} className="p-8 rounded-2xl border border-slate-200 hover:border-purple-500 hover:shadow-lg transition bg-white">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-lg" style={{backgroundColor: color + "20"}}>
-                        <Icon className="h-6 w-6" style={{color}} />
+                      <div className="p-3 rounded-lg bg-purple-100">
+                        <Icon className="h-6 w-6 text-purple-600" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-slate-900 mb-2">{benefit.title}</h3>
@@ -208,12 +191,11 @@ export default function Home() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredProducts.slice(0, 4).map((product, idx) => (
+                {featuredProducts.slice(0, 4).map((product) => (
                   <button
                     key={product.id}
                     onClick={() => navigate(`/produto/${product.id}`)}
-                    className="group rounded-2xl overflow-hidden border-2 transition bg-white hover:shadow-xl"
-                    style={{borderColor: googleColors[idx % 4]}}
+                    className="group rounded-2xl overflow-hidden border border-slate-200 hover:border-purple-500 hover:shadow-xl transition bg-white"
                   >
                     <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden relative">
                       {product.imageUrl ? (
@@ -225,19 +207,15 @@ export default function Home() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-slate-900 transition line-clamp-2" style={{color: googleColors[idx % 4]}}>
-                        {product.name}
-                      </h3>
-                      <p className="text-2xl font-bold mt-2" style={{color: googleColors[idx % 4]}}>
-                        R$ {parseFloat(product.price).toFixed(2)}
-                      </p>
+                      <h3 className="font-semibold text-slate-900 group-hover:text-purple-600 transition line-clamp-2">{product.name}</h3>
+                      <p className="text-2xl font-bold text-purple-600 mt-2">R$ {parseFloat(product.price).toFixed(2)}</p>
                       <p className="text-sm text-slate-600 mt-1">{product.stock} em estoque</p>
                     </div>
                   </button>
                 ))}
               </div>
 
-              <Button onClick={() => navigate("/produtos")} size="lg" className="w-full mt-8 rounded-full bg-gradient-to-r from-blue-600 via-red-600 to-yellow-600 hover:opacity-90 text-white border-0 sm:hidden">
+              <Button onClick={() => navigate("/produtos")} size="lg" className="w-full mt-8 rounded-full bg-purple-600 hover:bg-purple-700 sm:hidden">
                 Ver Todos os Produtos
               </Button>
             </div>
@@ -245,13 +223,13 @@ export default function Home() {
         )}
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-blue-600 via-red-600 to-yellow-600">
+        <section className="py-20 bg-gradient-to-r from-purple-600 to-indigo-700">
           <div className="container max-w-7xl px-4 text-center">
             <h2 className="text-4xl font-bold text-white mb-4">Pronto para criar algo único?</h2>
-            <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-purple-100 text-lg mb-8 max-w-2xl mx-auto">
               Escolha um produto, personalize com a ajuda da IA e receba em casa em poucos dias.
             </p>
-            <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 bg-white text-blue-600 hover:bg-blue-50">
+            <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 bg-white text-purple-600 hover:bg-purple-50">
               Começar Agora
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
