@@ -111,12 +111,9 @@ export default function Home() {
               <Badge className="mb-6 w-fit rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 border-0">
                 <Star className="mr-2 h-4 w-4 fill-current" /> Impacto Profundo
               </Badge>
-              <h1 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl text-slate-900">
-                FAÇA <span className="text-purple-600">DIFERENTE</span>
-              </h1>
-              <p className="mt-4 text-3xl font-bold text-purple-600">COMPRE COM A GENTE</p>
+              <h2 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl text-slate-900">Por que escolher <span className="text-purple-600">Impacto Profundo</span>?</h2>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                Personalize bonés, camisetas, moletons e muito mais. Nossa ferramenta com IA ajuda você a encontrar o estilo perfeito. Escolha, personalize, compre e receba em casa.
+                Oferecemos a melhor experiência de personalização com qualidade e rapidez. Escolha, personalize, compre e receba em casa.
               </p>
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                 <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base bg-purple-600 hover:bg-purple-700">
@@ -168,8 +165,8 @@ export default function Home() {
         <section id="beneficios" className="py-20 bg-gradient-to-b from-slate-50 to-white">
           <div className="container max-w-7xl px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-slate-900 mb-4">Por que escolher Impacto Profundo?</h2>
-              <p className="text-xl text-slate-600 max-w-2xl mx-auto">Oferecemos a melhor experiência de personalização com qualidade e rapidez</p>
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">FAÇA DIFERENTE</h2>
+              <p className="text-xl text-slate-600 max-w-2xl mx-auto">COMPRE COM A GENTE</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {benefits.map((benefit, idx) => {
