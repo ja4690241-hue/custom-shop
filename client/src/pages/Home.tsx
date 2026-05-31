@@ -44,7 +44,24 @@ export default function Home() {
               <Sparkles className="h-6 w-6" />
             </span>
             <span className="text-left">
-              <strong className="block text-xl tracking-tight text-slate-900">Impacto Profundo</strong>
+              <strong className="block text-xl tracking-tight">
+                <span style={{color: '#2563eb'}}>I</span>
+                <span style={{color: '#dc2626'}}>m</span>
+                <span style={{color: '#eab308'}}>p</span>
+                <span style={{color: '#16a34a'}}>a</span>
+                <span style={{color: '#2563eb'}}>c</span>
+                <span style={{color: '#dc2626'}}>t</span>
+                <span style={{color: '#eab308'}}>o</span>
+                <span style={{color: '#16a34a'}}> </span>
+                <span style={{color: '#2563eb'}}>P</span>
+                <span style={{color: '#dc2626'}}>r</span>
+                <span style={{color: '#eab308'}}>o</span>
+                <span style={{color: '#16a34a'}}>f</span>
+                <span style={{color: '#2563eb'}}>u</span>
+                <span style={{color: '#dc2626'}}>n</span>
+                <span style={{color: '#eab308'}}>d</span>
+                <span style={{color: '#16a34a'}}>o</span>
+              </strong>
               <span className="hidden text-xs text-slate-600 sm:block">Faça diferente, compre com a gente</span>
             </span>
           </button>
