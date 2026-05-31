@@ -25,15 +25,20 @@ export async function createPixPayment(data: {
   }
 }) {
   try {
-    if (!MP_ACCESS_TOKEN) {
+    if (!MP_ACCESS_TOKEN || MP_ACCESS_TOKEN === '') {
       console.warn('Mercado Pago Access Token não configurado. Usando modo de simulação.');
+      // Payload PIX estático válido para testes visuais (não funciona em bancos reais)
+      const amountStr = data.transaction_amount.toFixed(2);
+      const amountLen = amountStr.length.toString().padStart(2, '0');
+      const simulatedPix = `00020126580014br.gov.bcb.brcode013665712a38bc93cb5326d64d23fa2d520400005303986${amountLen}${amountStr}5802BR5913CUSTOM%20SHOP6009SAO%20PAULO62410503***63041D3D`;
+      
       return {
         id: 'simulated_' + Date.now(),
         status: 'pending',
         point_of_interaction: {
           transaction_data: {
-            qr_code: '00020126580014br.gov.bcb.brcode013665712a38bc93cb5326d64d23fa2d5204000053039865405' + data.transaction_amount.toFixed(2) + '5802BR5913CUSTOM%20SHOP6009SAO%20PAULO62410503***63041D3D',
-            qr_code_base64: '', // O frontend pode gerar a partir do texto
+            qr_code: simulatedPix,
+            qr_code_base64: '',
             ticket_url: '#'
           }
         }
