@@ -44,23 +44,23 @@ export default function Home() {
               <Sparkles className="h-6 w-6" />
             </span>
             <span className="text-left">
-              <strong className="block text-xl tracking-tight">
+              <strong className="block text-xl tracking-tight uppercase">
                 <span style={{color: '#2563eb'}}>I</span>
-                <span style={{color: '#dc2626'}}>m</span>
-                <span style={{color: '#eab308'}}>p</span>
-                <span style={{color: '#16a34a'}}>a</span>
-                <span style={{color: '#2563eb'}}>c</span>
-                <span style={{color: '#dc2626'}}>t</span>
-                <span style={{color: '#eab308'}}>o</span>
+                <span style={{color: '#dc2626'}}>M</span>
+                <span style={{color: '#eab308'}}>P</span>
+                <span style={{color: '#16a34a'}}>A</span>
+                <span style={{color: '#2563eb'}}>C</span>
+                <span style={{color: '#dc2626'}}>T</span>
+                <span style={{color: '#eab308'}}>O</span>
                 <span style={{color: '#16a34a'}}> </span>
                 <span style={{color: '#2563eb'}}>P</span>
-                <span style={{color: '#dc2626'}}>r</span>
-                <span style={{color: '#eab308'}}>o</span>
-                <span style={{color: '#16a34a'}}>f</span>
-                <span style={{color: '#2563eb'}}>u</span>
-                <span style={{color: '#dc2626'}}>n</span>
-                <span style={{color: '#eab308'}}>d</span>
-                <span style={{color: '#16a34a'}}>o</span>
+                <span style={{color: '#dc2626'}}>R</span>
+                <span style={{color: '#eab308'}}>O</span>
+                <span style={{color: '#16a34a'}}>F</span>
+                <span style={{color: '#2563eb'}}>U</span>
+                <span style={{color: '#dc2626'}}>N</span>
+                <span style={{color: '#eab308'}}>D</span>
+                <span style={{color: '#16a34a'}}>O</span>
               </strong>
               <span className="hidden text-xs text-slate-600 sm:block">Faça diferente, compre com a gente</span>
             </span>
