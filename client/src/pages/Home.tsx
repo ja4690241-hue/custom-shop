@@ -40,36 +40,36 @@ export default function Home() {
       <nav className="sticky top-0 z-50 border-b border-slate-200/50 bg-white/80 backdrop-blur-xl shadow-sm">
         <div className="container flex max-w-7xl items-center justify-between py-4 px-4">
           <button onClick={() => navigate("/")} className="flex items-center gap-3 hover:opacity-80 transition">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-600/20">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/20">
               <Sparkles className="h-6 w-6" />
             </span>
             <span className="text-left">
-              <strong className="block text-xl tracking-tight text-slate-900">Custom Shop</strong>
-              <span className="hidden text-xs text-slate-600 sm:block">Produtos únicos, feitos para você</span>
+              <strong className="block text-xl tracking-tight text-slate-900">Impacto Profundo</strong>
+              <span className="hidden text-xs text-slate-600 sm:block">Faça diferente, compre com a gente</span>
             </span>
           </button>
 
           <div className="hidden items-center gap-8 md:flex">
-            <button onClick={() => navigate("/produtos")} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+            <button onClick={() => navigate("/produtos")} className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
               Catálogo
             </button>
-            <a href="#beneficios" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+            <a href="#beneficios" className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
               Por que escolher
             </a>
-            <a href="#destaques" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+            <a href="#destaques" className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
               Destaques
             </a>
             {user?.role === "admin" && (
-              <button onClick={() => navigate("/admin")} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+              <button onClick={() => navigate("/admin")} className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
                 Admin
               </button>
             )}
-            <button onClick={() => navigate("/pedidos")} className="text-sm font-medium text-slate-700 hover:text-blue-600 transition">
+            <button onClick={() => navigate("/pedidos")} className="text-sm font-medium text-slate-700 hover:text-purple-600 transition">
               Meus Pedidos
             </button>
           </div>
 
-          <Button onClick={() => navigate("/carrinho")} className="relative rounded-full px-5 bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => navigate("/carrinho")} className="relative rounded-full px-5 bg-purple-600 hover:bg-purple-700">
             <ShoppingBag className="mr-2 h-5 w-5" />
             Carrinho
             {itemCount > 0 && (
@@ -85,23 +85,24 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 -z-10">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
           </div>
 
           <div className="container grid max-w-7xl gap-12 py-20 lg:grid-cols-2 lg:py-32 px-4">
             <div className="flex flex-col justify-center">
-              <Badge className="mb-6 w-fit rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 border-0">
-                <Star className="mr-2 h-4 w-4 fill-current" /> Loja de presentes personalizados
+              <Badge className="mb-6 w-fit rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 border-0">
+                <Star className="mr-2 h-4 w-4 fill-current" /> Impacto Profundo
               </Badge>
-              <h1 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl text-slate-900 animate-fade-in-up">
-                Crie produtos <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">únicos</span> com sua marca
+              <h1 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl text-slate-900">
+                FAÇA <span className="text-purple-600">DIFERENTE</span>
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 animate-fade-in-up [animation-delay:200ms]">
+              <p className="mt-4 text-3xl font-bold text-purple-600">COMPRE COM A GENTE</p>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
                 Personalize bonés, camisetas, moletons e muito mais. Nossa ferramenta com IA ajuda você a encontrar o estilo perfeito. Escolha, personalize, compre e receba em casa.
               </p>
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row animate-fade-in-up [animation-delay:400ms]">
-                <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base bg-blue-600 hover:bg-blue-700 btn-hover-lift">
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 text-base bg-purple-600 hover:bg-purple-700">
                   Começar Personalização
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -112,26 +113,13 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl blur-2xl opacity-20" />
-              <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl p-8 shadow-xl animate-scale-in">
-                <div className="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl flex items-center justify-center overflow-hidden">
-                  <div className="text-center group">
-                    <div className="relative">
-                      <ShoppingBag className="h-32 w-32 text-blue-600 mx-auto mb-4 opacity-20 group-hover:scale-110 transition-transform duration-500" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Sparkles className="h-12 w-12 text-blue-500 animate-pulse" />
-                      </div>
-                    </div>
-                    <p className="text-slate-600 font-black text-xl tracking-tight">Sua criação aqui</p>
-                    <p className="text-slate-400 text-sm">Personalize com IA</p>
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-2xl blur-2xl opacity-20" />
+              <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl p-8 shadow-xl">
+                <div className="aspect-square bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl flex items-center justify-center">
+                  <div className="text-center">
+                    <ShoppingBag className="h-24 w-24 text-purple-600 mx-auto mb-4 opacity-20" />
+                    <p className="text-slate-600 font-medium">Sua criação aqui</p>
                   </div>
-                </div>
-                {/* Floating elements for visual flair */}
-                <div className="absolute -top-6 -right-6 h-20 w-20 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-bounce [animation-duration:3s]">
-                  <Palette className="h-10 w-10 text-blue-600" />
-                </div>
-                <div className="absolute -bottom-6 -left-6 h-16 w-16 bg-white rounded-2xl shadow-lg flex items-center justify-center animate-bounce [animation-duration:4s] [animation-delay:1s]">
-                  <Star className="h-8 w-8 text-amber-400 fill-amber-400" />
                 </div>
               </div>
             </div>
@@ -148,9 +136,9 @@ export default function Home() {
                   <button
                     key={cat.id}
                     onClick={() => navigate(`/produtos?categoria=${cat.slug}`)}
-                    className="p-6 rounded-xl border border-slate-200 hover:border-blue-500 hover:shadow-lg transition text-left group"
+                    className="p-6 rounded-xl border border-slate-200 hover:border-purple-500 hover:shadow-lg transition text-left group"
                   >
-                    <h3 className="font-semibold text-slate-900 group-hover:text-blue-600 transition">{cat.name}</h3>
+                    <h3 className="font-semibold text-slate-900 group-hover:text-purple-600 transition">{cat.name}</h3>
                     <p className="text-sm text-slate-600 mt-2">{cat.description}</p>
                   </button>
                 ))}
@@ -163,17 +151,17 @@ export default function Home() {
         <section id="beneficios" className="py-20 bg-gradient-to-b from-slate-50 to-white">
           <div className="container max-w-7xl px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-slate-900 mb-4">Por que escolher a Custom Shop?</h2>
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">Por que escolher Impacto Profundo?</h2>
               <p className="text-xl text-slate-600 max-w-2xl mx-auto">Oferecemos a melhor experiência de personalização com qualidade e rapidez</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {benefits.map((benefit, idx) => {
                 const Icon = benefit.icon;
                 return (
-                  <div key={idx} className="p-8 rounded-2xl border border-slate-200 hover:border-blue-500 hover:shadow-lg transition bg-white">
+                  <div key={idx} className="p-8 rounded-2xl border border-slate-200 hover:border-purple-500 hover:shadow-lg transition bg-white">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-lg bg-blue-100">
-                        <Icon className="h-6 w-6 text-blue-600" />
+                      <div className="p-3 rounded-lg bg-purple-100">
+                        <Icon className="h-6 w-6 text-purple-600" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-slate-900 mb-2">{benefit.title}</h3>
@@ -207,7 +195,7 @@ export default function Home() {
                   <button
                     key={product.id}
                     onClick={() => navigate(`/produto/${product.id}`)}
-                    className="group rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-500 hover:shadow-xl transition bg-white"
+                    className="group rounded-2xl overflow-hidden border border-slate-200 hover:border-purple-500 hover:shadow-xl transition bg-white"
                   >
                     <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden relative">
                       {product.imageUrl ? (
@@ -219,15 +207,15 @@ export default function Home() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-slate-900 group-hover:text-blue-600 transition line-clamp-2">{product.name}</h3>
-                      <p className="text-2xl font-bold text-blue-600 mt-2">R$ {parseFloat(product.price).toFixed(2)}</p>
+                      <h3 className="font-semibold text-slate-900 group-hover:text-purple-600 transition line-clamp-2">{product.name}</h3>
+                      <p className="text-2xl font-bold text-purple-600 mt-2">R$ {parseFloat(product.price).toFixed(2)}</p>
                       <p className="text-sm text-slate-600 mt-1">{product.stock} em estoque</p>
                     </div>
                   </button>
                 ))}
               </div>
 
-              <Button onClick={() => navigate("/produtos")} size="lg" className="w-full mt-8 rounded-full bg-blue-600 hover:bg-blue-700 sm:hidden">
+              <Button onClick={() => navigate("/produtos")} size="lg" className="w-full mt-8 rounded-full bg-purple-600 hover:bg-purple-700 sm:hidden">
                 Ver Todos os Produtos
               </Button>
             </div>
@@ -235,13 +223,13 @@ export default function Home() {
         )}
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-700">
+        <section className="py-20 bg-gradient-to-r from-purple-600 to-indigo-700">
           <div className="container max-w-7xl px-4 text-center">
             <h2 className="text-4xl font-bold text-white mb-4">Pronto para criar algo único?</h2>
-            <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-purple-100 text-lg mb-8 max-w-2xl mx-auto">
               Escolha um produto, personalize com a ajuda da IA e receba em casa em poucos dias.
             </p>
-            <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 bg-white text-blue-600 hover:bg-blue-50">
+            <Button onClick={() => navigate("/produtos")} size="lg" className="rounded-full px-8 bg-white text-purple-600 hover:bg-purple-50">
               Começar Agora
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -254,8 +242,8 @@ export default function Home() {
         <div className="container max-w-7xl px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h3 className="font-semibold text-white mb-4">Custom Shop</h3>
-              <p className="text-sm">Produtos personalizados de qualidade premium</p>
+              <h3 className="font-semibold text-white mb-4">Impacto Profundo</h3>
+              <p className="text-sm">Faça diferente, compre com a gente. Produtos personalizados de qualidade premium</p>
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Produtos</h4>
@@ -283,7 +271,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-slate-800 pt-8 text-center text-sm">
-            <p>&copy; 2026 Custom Shop. Todos os direitos reservados.</p>
+            <p>&copy; 2026 Impacto Profundo. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
