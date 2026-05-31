@@ -1,8 +1,8 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 
 // O Access Token deve ser configurado nas variáveis de ambiente do Vercel
-// Por enquanto, usaremos uma variável ou um valor vazio para evitar erros
-const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN || '';
+// Credenciais de teste fornecidas pelo usuário
+const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN || 'TEST-4045448063917433-053109-4eb41dd6fbbd589981ae529c741d7f85-746685437';
 
 const client = new MercadoPagoConfig({ 
   accessToken: MP_ACCESS_TOKEN,
