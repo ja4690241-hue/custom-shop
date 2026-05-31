@@ -28,17 +28,9 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, custo
       });
     },
     onError: (error: any) => {
-      console.error("Erro tRPC:", error);
-      toast.error("Aviso: Usando modo de demonstração (QR Code visual apenas).");
-      
-      const amountStr = amount.toFixed(2);
-      const amountLen = amountStr.length.toString().padStart(2, '0');
-      const simulatedPix = `00020126580014br.gov.bcb.brcode013665712a38bc93cb5326d64d23fa2d520400005303986${amountLen}${amountStr}5802BR5913CUSTOM%20SHOP6009SAO%20PAULO62410503***63041D3D`;
-
-      setPixData({
-        qrCode: simulatedPix,
-        id: "simulated_" + Date.now()
-      });
+      console.error("Erro tRPC ao criar pagamento:", error);
+      toast.error("Erro ao gerar QR Code real. Verifique os dados ou tente novamente.");
+      setPixData(null);
     }
   });
 
