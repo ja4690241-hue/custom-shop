@@ -56,11 +56,30 @@ export default function Checkout() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const formatCPF = (value: string) => {
+    const cleanValue = value.replace(/\D/g, "");
+    return cleanValue
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+      .slice(0, 14);
+  };
+
+  const formatCEP = (value: string) => {
+    const cleanValue = value.replace(/\D/g, "");
+    return cleanValue
+      .replace(/(\d{5})(\d)/, "$1-$2")
+      .slice(0, 9);
+  };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = event.target;
+    const { name } = event.target;
+    let { value } = event.target;
     
-    // Auto-busca de CEP ao digitar 8 dígitos
-    if (name === "zipCode") {
+    if (name === "cpf") {
+      value = formatCPF(value);
+    } else if (name === "zipCode") {
+      value = formatCEP(value);
       const cleanCep = value.replace(/\D/g, "");
       if (cleanCep.length === 8) {
         fetchAddress(cleanCep);
