@@ -13,7 +13,7 @@ app.use(
   "/api/trpc",
   createExpressMiddleware({
     router: appRouter,
-    createContext: (opts) => createContext(opts as any),
+    createContext: () => ({ user: null }), // Isolar autenticação para evitar erros no Vercel
     onError({ error, path }) {
       console.error(`>>> tRPC Error on ${path}:`, error);
     },
