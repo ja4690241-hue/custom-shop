@@ -14,17 +14,16 @@ app.use(
   createExpressMiddleware({
     router: appRouter,
     createContext: (opts) => createContext(opts as any),
+    onError({ error, path }) {
+      console.error(`>>> tRPC Error on ${path}:`, error);
+    },
   })
 );
 
-// Adicionar um handler para a raiz da API para evitar 404
-app.get("/api", (req, res) => {
-  res.json({ message: "API is working" });
-});
-
-// Rota de saúde para teste
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "API is running on Vercel" });
+// Fallback para erros não tratados para evitar que o Vercel retorne HTML
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error(">>> Global Error:", err);
+  res.status(500).json({ error: true, message: "Erro interno no servidor" });
 });
 
 export default app;

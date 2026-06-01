@@ -101,21 +101,27 @@ export const appRouter = router({
         cpf: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
-        return createPixPayment({
-          transaction_amount: input.amount,
-          description: input.description,
-          payer: {
-            email: input.email,
-            first_name: input.firstName,
-            last_name: input.lastName,
-            ...(input.cpf ? {
-              identification: {
-                type: 'CPF',
-                number: input.cpf
-              }
-            } : {})
-          }
-        });
+        try {
+          const result = await createPixPayment({
+            transaction_amount: input.amount,
+            description: input.description,
+            payer: {
+              email: input.email,
+              first_name: input.firstName,
+              last_name: input.lastName,
+              ...(input.cpf ? {
+                identification: {
+                  type: 'CPF',
+                  number: input.cpf
+                }
+              } : {})
+            }
+          });
+          return result;
+        } catch (err: any) {
+          console.error(">>> createPayment Mutation Error:", err);
+          return { error: true, message: err.message || "Erro ao processar pagamento" };
+        }
       }),
   }),
 });
