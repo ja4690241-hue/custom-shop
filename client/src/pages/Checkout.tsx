@@ -144,7 +144,12 @@ export default function Checkout() {
     };
 
     if (formData.paymentMethod === "pix" && !showPix) {
-      setConfirmedOrder(order);
+      // Garantir que o CPF vá apenas com números
+      const cleanOrder = {
+        ...order,
+        cpf: formData.cpf.replace(/\D/g, '')
+      };
+      setConfirmedOrder(cleanOrder);
       setShowPix(true);
       toast.info("Gere o QR Code para pagar via PIX");
       return;

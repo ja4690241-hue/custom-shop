@@ -67,7 +67,11 @@ export async function createPixPayment(data: {
 
     if (!response.ok) {
       console.error('Erro na resposta da API do Mercado Pago:', JSON.stringify(result, null, 2));
-      throw new Error(result.message || 'Erro ao criar pagamento no Mercado Pago');
+      // Extrair mensagem de erro detalhada se disponível
+      const errorMessage = result.message || 
+                           (result.cause && result.cause[0]?.description) || 
+                           'Erro ao criar pagamento no Mercado Pago';
+      throw new Error(errorMessage);
     }
 
     console.log('Sucesso ao criar pagamento (Fetch). ID:', result.id);

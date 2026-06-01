@@ -43,7 +43,8 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, custo
     },
     onError: (error: any) => {
       console.error("Erro tRPC ao criar pagamento:", error);
-      toast.error("Erro ao gerar QR Code real. Verifique os dados ou tente novamente.");
+      const msg = error.message || "Erro ao gerar QR Code real.";
+      toast.error(msg);
       setPixData(null);
     }
   });
