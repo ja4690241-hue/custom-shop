@@ -7,6 +7,7 @@ import { calculateShipping, formatCurrency, saveLocalOrder } from "@/lib/shop";
 import { ArrowLeft, CheckCircle2, CreditCard, PackageCheck, ShieldCheck, QrCode, Copy, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { PixPayment } from "@/components/PixPayment";
+import { CardPayment } from "@/components/CardPayment";
 
 export default function Checkout() {
   const [, navigate] = useLocation();
@@ -439,6 +440,49 @@ export default function Checkout() {
                   <p className="mt-4 text-xs text-emerald-700 bg-white/50 p-3 rounded-lg">
                     ⚠️ Após realizar a transferência, clique em "Confirmar pedido" para finalizar sua compra. Seu pedido será processado assim que recebermos o pagamento.
                   </p>
+                </div>
+              )}
+
+              {/* Cartão de Crédito */}
+              {formData.paymentMethod === "card" && (
+                <div className="mt-6">
+                  <CardPayment
+                    amount={grandTotal}
+                    orderId={`CS-${Date.now().toString().slice(-6)}`}
+                    customerEmail={formData.email}
+                    customerCPF={formData.cpf}
+                    customerName={formData.fullName}
+                    onSuccess={() => {
+                      const order = {
+                        id: crypto.randomUUID(),
+                        number: `CS-${Date.now().toString().slice(-6)}`,
+                        createdAt: new Date().toISOString(),
+                        status: "processing",
+                        customer: {
+                          fullName: formData.fullName,
+                          email: formData.email,
+                          phone: formData.phone,
+                        },
+                        shippingAddress: {
+                          street: formData.street,
+                          number: formData.number,
+                          neighborhood: formData.neighborhood,
+                          complement: formData.complement,
+                          city: formData.city,
+                          state: formData.state.toUpperCase(),
+                          zipCode: formData.zipCode,
+                        },
+                        items,
+                        subtotal: total,
+                        shipping,
+                        total: grandTotal,
+                        paymentMethod: formData.paymentMethod,
+                      };
+                      saveLocalOrder(order);
+                      clearCart();
+                      navigate("/pedidos");
+                    }}
+                  />
                 </div>
               )}
 
