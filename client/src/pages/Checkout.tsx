@@ -157,16 +157,12 @@ export default function Checkout() {
         phone: formData.phone,
       },
       shippingAddress: {
-        street: formData.street,
-        number: formData.number,
-        neighborhood: formData.neighborhood,
-        complement: formData.complement,
+        address: `${formData.street}, ${formData.number}${formData.complement ? ` - ${formData.complement}` : ""} - ${formData.neighborhood}`,
         city: formData.city,
         state: formData.state.toUpperCase(),
         zipCode: formData.zipCode,
-        fullAddress: `${formData.street}, ${formData.number}${formData.complement ? ` - ${formData.complement}` : ""} - ${formData.neighborhood}`,
       },
-      cpf: formData.cpf,
+
       items,
       subtotal: total,
       shipping,

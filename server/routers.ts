@@ -14,6 +14,7 @@ import {
 } from "./db";
 import { z } from "zod";
 import { createPixPayment, mercadoPagoPublicKey } from "./mercadopago";
+import type { TrpcContext } from "./_core/context";
 
 export const appRouter = router({
   system: systemRouter,
@@ -21,7 +22,7 @@ export const appRouter = router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      (ctx.res as any).clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return {
         success: true,
       } as const;

@@ -1,4 +1,4 @@
-import { MercadoPagoConfig, Payment } from 'mercadopago';
+// import { MercadoPagoConfig, Payment } from 'mercadopago';
 
 // Credenciais do Mercado Pago
 const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN || 'APP_USR-75899114462674-053112-4ec2dd26ba31c276fe6aae055234158d-746685437';
@@ -6,12 +6,12 @@ const MP_PUBLIC_KEY = process.env.MP_PUBLIC_KEY || 'APP_USR-5a64239c-6718-4d20-9
 const MP_CLIENT_ID = process.env.MP_CLIENT_ID || '75899114462674';
 const MP_CLIENT_SECRET = process.env.MP_CLIENT_SECRET || 'qdTPIjPLP6jEq4cGn0cGJ1gPkEqh2Dkj';
 
-const client = new MercadoPagoConfig({ 
-  accessToken: MP_ACCESS_TOKEN,
-  options: { timeout: 10000 } // Aumentado para 10s para evitar timeouts
-});
+// const client = new MercadoPagoConfig({ 
+//   accessToken: MP_ACCESS_TOKEN,
+//   options: { timeout: 10000 } // Aumentado para 10s para evitar timeouts
+// });
 
-const payment = new Payment(client);
+// const payment = new Payment(client);
 
 export const mercadoPagoPublicKey = MP_PUBLIC_KEY;
 export const mercadoPagoClientId = MP_CLIENT_ID;
