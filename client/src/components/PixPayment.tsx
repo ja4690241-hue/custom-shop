@@ -23,10 +23,14 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, custo
   const createPayment = trpc.orders.createPayment.useMutation({
     onSuccess: (data: any) => {
       console.log("Resposta do Mercado Pago recebida:", data);
-      const qrCode = data.point_of_interaction?.transaction_data?.qr_code || 
-                     data.transaction_data?.qr_code || 
-                     data.qr_code;
+      console.log("Processando dados do pagamento...");
+      // O Mercado Pago retorna o qr_code dentro de point_of_interaction.transaction_data
+      const qrCode = data.point_of_interaction?.transaction_data?.qr_code;
+      const qrCodeBase64 = data.point_of_interaction?.transaction_data?.qr_code_base64;
       
+      console.log("QR Code encontrado:", qrCode ? "Sim (texto)" : "Não");
+      console.log("QR Code Base64 encontrado:", qrCodeBase64 ? "Sim (imagem)" : "Não");
+
       if (qrCode) {
         setPixData({
           qrCode: qrCode,
@@ -76,8 +80,22 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, custo
     account: "68014024-6"
   };
 
+  const [qrCodeBase64, setQrCodeBase64] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (createPayment.data) {
+      const base64 = createPayment.data.point_of_interaction?.transaction_data?.qr_code_base64;
+      if (base64) setQrCodeBase64(base64);
+    }
+  }, [createPayment.data]);
+
   const pixKey = pixData?.qrCode || "";
-  const qrCodeUrl = pixKey ? `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixKey)}` : "";
+  // Priorizar o Base64 retornado pelo Mercado Pago, se não houver, usar a API externa
+  const qrCodeUrl = qrCodeBase64 
+    ? `data:image/png;base64,${qrCodeBase64}`
+    : pixKey 
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixKey)}` 
+      : "";
 
   const copyPixPayload = () => {
     if (!pixKey) return;
