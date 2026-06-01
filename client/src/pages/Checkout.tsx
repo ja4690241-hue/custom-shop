@@ -58,6 +58,15 @@ export default function Checkout() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
+    
+    // Auto-busca de CEP ao digitar 8 dígitos
+    if (name === "zipCode") {
+      const cleanCep = value.replace(/\D/g, "");
+      if (cleanCep.length === 8) {
+        fetchAddress(cleanCep);
+      }
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Limpar erro ao digitar
     if (errors[name]) {
@@ -65,10 +74,7 @@ export default function Checkout() {
     }
   };
 
-  const handleCepBlur = async () => {
-    const cep = formData.zipCode.replace(/\D/g, "");
-    if (cep.length !== 8) return;
-
+  const fetchAddress = async (cep: string) => {
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const data = await response.json();
@@ -82,7 +88,6 @@ export default function Checkout() {
           state: data.uf || prev.state,
         }));
         
-        // Limpar erros dos campos preenchidos
         setErrors((prev) => ({
           ...prev,
           street: "",
@@ -98,6 +103,13 @@ export default function Checkout() {
       }
     } catch (error) {
       console.error("Erro ao buscar CEP:", error);
+    }
+  };
+
+  const handleCepBlur = () => {
+    const cleanCep = formData.zipCode.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      fetchAddress(cleanCep);
     }
   };
 
