@@ -16,21 +16,8 @@ const payment = new Payment(client);
 export const mercadoPagoPublicKey = MP_PUBLIC_KEY;
 export const mercadoPagoClientId = MP_CLIENT_ID;
 
-export async function createPixPayment(data: {
-  transaction_amount: number;
-  description: string;
-  payer: {
-    email: string;
-    first_name: string;
-    last_name: string;
-    identification?: {
-      type: string;
-      number: string;
-    }
-  }
-}) {
+export async function createPixPayment(data: any) {
   try {
-    // Configuração do pagamento Pix
     const body = {
       transaction_amount: Number(data.transaction_amount.toFixed(2)),
       description: data.description.substring(0, 60),
@@ -59,14 +46,12 @@ export async function createPixPayment(data: {
     const result = await response.json();
 
     if (!response.ok) {
-      const errorMessage = result.message || 
-                           (result.cause && result.cause[0]?.description) || 
-                           'Erro ao criar pagamento no Mercado Pago';
-      throw new Error(errorMessage);
+      const errorMsg = result.message || (result.cause && result.cause[0]?.description) || 'Erro MP';
+      return { error: true, message: errorMsg, details: result };
     }
 
     return result;
   } catch (error: any) {
-    throw error;
+    return { error: true, message: error.message || 'Erro Interno' };
   }
 }
