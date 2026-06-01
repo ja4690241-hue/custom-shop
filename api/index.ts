@@ -10,7 +10,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // tRPC API
 app.use(
-  "/api",
+  "/api/trpc",
   createExpressMiddleware({
     router: appRouter,
     createContext: (opts) => createContext(opts as any),
