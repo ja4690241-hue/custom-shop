@@ -42,11 +42,23 @@ const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: "/api/trpc",
-      fetch(input, init) {
-        return globalThis.fetch(input, {
+      async fetch(input, init) {
+        const response = await globalThis.fetch(input, {
           ...(init ?? {}),
           credentials: "include",
         });
+        
+        // Log detalhado para depuração no Vercel
+        if (!response.ok || response.headers.get("content-type")?.includes("text/html")) {
+          const text = await response.clone().text();
+          console.error(">>> API Response Error:", {
+            status: response.status,
+            contentType: response.headers.get("content-type"),
+            bodyPreview: text.substring(0, 200)
+          });
+        }
+        
+        return response;
       },
     }),
   ],
