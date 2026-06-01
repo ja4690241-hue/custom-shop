@@ -30,12 +30,7 @@ export async function createPixPayment(data: {
   }
 }) {
   try {
-    // Log para verificar se o token está presente (sem mostrar o token completo por segurança)
-    console.log('Iniciando criação de pagamento Pix...');
-    console.log('Token configurado:', MP_ACCESS_TOKEN ? `Sim (Inicia com ${MP_ACCESS_TOKEN.substring(0, 15)}...)` : 'Não');
-
     // Configuração do pagamento Pix
-    // O Mercado Pago exige que o transaction_amount seja um número com no máximo 2 casas decimais
     const body = {
       transaction_amount: Number(data.transaction_amount.toFixed(2)),
       description: data.description.substring(0, 60),
@@ -50,8 +45,6 @@ export async function createPixPayment(data: {
         }
       }
     };
-
-    console.log('Enviando via Fetch direto para API do Mercado Pago...');
     
     const response = await fetch('https://api.mercadopago.com/v1/payments', {
       method: 'POST',
@@ -66,22 +59,14 @@ export async function createPixPayment(data: {
     const result = await response.json();
 
     if (!response.ok) {
-      console.error('Erro na resposta da API do Mercado Pago:', JSON.stringify(result, null, 2));
-      // Extrair mensagem de erro detalhada se disponível
       const errorMessage = result.message || 
                            (result.cause && result.cause[0]?.description) || 
                            'Erro ao criar pagamento no Mercado Pago';
       throw new Error(errorMessage);
     }
 
-    console.log('Sucesso ao criar pagamento (Fetch). ID:', result.id);
     return result;
   } catch (error: any) {
-    console.error('ERRO CRÍTICO AO CRIAR PAGAMENTO NO MERCADO PAGO:');
-    console.error('Mensagem:', error.message || error);
-    if (error.cause) {
-      console.error('Detalhes técnicos (cause):', JSON.stringify(error.cause, null, 2));
-    }
     throw error;
   }
 }
