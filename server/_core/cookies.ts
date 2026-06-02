@@ -24,9 +24,7 @@ function isSecureRequest(req: any) {
 
 export function getSessionCookieOptions(
   req: any
-): Pick<CookieOptions, "httpOnly" | "path" | "sameSite" | "secure"> {
-
-
+): Partial<CookieOptions> {
   return {
     httpOnly: true,
     path: "/",
