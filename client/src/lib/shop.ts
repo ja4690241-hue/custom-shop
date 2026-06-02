@@ -16,7 +16,7 @@ export function parseJsonArray(value: string | null | undefined): string[] {
   }
 }
 
-export type LocalOrderStatus = "processing" | "shipped" | "delivered";
+export type LocalOrderStatus = "pending" | "processing" | "shipped" | "delivered";
 
 export interface LocalOrder {
   id: string;
@@ -29,7 +29,11 @@ export interface LocalOrder {
     phone: string;
   };
   shippingAddress: {
-    address: string;
+    address?: string;
+    street?: string;
+    number?: string;
+    neighborhood?: string;
+    complement?: string;
     city: string;
     state: string;
     zipCode: string;
