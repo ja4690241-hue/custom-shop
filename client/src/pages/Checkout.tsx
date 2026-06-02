@@ -457,7 +457,7 @@ export default function Checkout() {
                         id: crypto.randomUUID(),
                         number: `CS-${Date.now().toString().slice(-6)}`,
                         createdAt: new Date().toISOString(),
-                        status: "processing",
+                        status: "pending" as const,
                         customer: {
                           fullName: formData.fullName,
                           email: formData.email,

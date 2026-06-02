@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -57,7 +57,7 @@ export function CardPayment({ amount, orderId, customerEmail, customerCPF, custo
     return cleaned;
   };
 
-  const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCardChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
     if (name === "cardNumber") {
@@ -87,13 +87,10 @@ export function CardPayment({ amount, orderId, customerEmail, customerCPF, custo
       createPayment.mutate({
         amount,
         description: `Pedido ${orderId} - Custom Shop`,
-        paymentMethodId: "credit_card",
         email: customerEmail,
         firstName: customerName.split(" ")[0],
         lastName: customerName.split(" ").slice(1).join(" "),
-        identificationType: "CPF",
-        identificationNumber: customerCPF.replace(/\D/g, ""),
-        installments: Number(cardData.installments),
+        cpf: customerCPF.replace(/\D/g, ""),
       });
     } catch (error) {
       console.error("Erro:", error);
