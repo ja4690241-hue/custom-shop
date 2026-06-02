@@ -9,7 +9,7 @@ export default function AdminOrders() {
   const [, navigate] = useLocation();
   const [orders, setOrders] = useState<LocalOrder[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<LocalOrder | null>(null);
-  const [filter, setFilter] = useState<"all" | "processing" | "shipped" | "delivered">("all");
+  const [filter, setFilter] = useState<"all" | LocalOrderStatus>("all");
 
   useEffect(() => {
     setOrders(getLocalOrders());
@@ -19,22 +19,30 @@ export default function AdminOrders() {
     filter === "all" ? true : order.status === filter
   );
 
-  const updateOrderStatus = (orderId: string, newStatus: "processing" | "shipped" | "delivered") => {
+  const updateOrderStatus = (orderId: string, newStatus: LocalOrderStatus) => {
     const order = orders.find(o => o.id === orderId);
     if (order) {
       order.status = newStatus;
-      saveLocalOrder(order);
-      setOrders([...orders]);
-      setSelectedOrder(order);
+      // Note: saveLocalOrder in shop.ts currently appends to a list. 
+      // We should update the existing list in localStorage.
+      const allOrders = getLocalOrders();
+      const updatedOrders = allOrders.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
+      window.localStorage.setItem("custom_shop_orders", JSON.stringify(updatedOrders));
+      
+      setOrders(updatedOrders);
+      setSelectedOrder({ ...order, status: newStatus });
+      
       toast.success(`Pedido atualizado para: ${
         newStatus === "delivered" ? "Entregue" :
         newStatus === "shipped" ? "Enviado" :
-        "Em Produção"
+        newStatus === "processing" ? "Em Produção" :
+        "Pendente"
       }`);
     }
   };
 
   const statusConfig = {
+    pending: { label: "Pendente", icon: Loader2, color: "bg-slate-100 text-slate-900", nextStatus: "processing" as const },
     processing: { label: "Em Produção", icon: Package, color: "bg-amber-100 text-amber-900", nextStatus: "shipped" as const },
     shipped: { label: "Enviado", icon: Truck, color: "bg-blue-100 text-blue-900", nextStatus: "delivered" as const },
     delivered: { label: "Entregue", icon: CheckCircle2, color: "bg-emerald-100 text-emerald-900", nextStatus: null },
@@ -59,7 +67,7 @@ export default function AdminOrders() {
       <main className="container max-w-7xl mx-auto px-4 py-12">
         {/* Filters */}
         <div className="mb-8 flex gap-3 overflow-x-auto pb-2">
-          {(["all", "processing", "shipped", "delivered"] as const).map((f) => (
+          {(["all", "pending", "processing", "shipped", "delivered"] as const).map((f) => (
             <Button
               key={f}
               onClick={() => setFilter(f)}
@@ -71,6 +79,7 @@ export default function AdminOrders() {
               }`}
             >
               {f === "all" ? "Todos" :
+               f === "pending" ? "Pendentes" :
                f === "processing" ? "Em Produção" :
                f === "shipped" ? "Enviados" :
                "Entregues"}
@@ -186,7 +195,7 @@ export default function AdminOrders() {
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 mb-3">Atualizar Status</p>
                 <div className="space-y-2">
-                  {(["processing", "shipped", "delivered"] as const).map((status) => (
+                  {(["pending", "processing", "shipped", "delivered"] as const).map((status) => (
                     <Button
                       key={status}
                       onClick={() => updateOrderStatus(selectedOrder.id, status)}
@@ -197,7 +206,8 @@ export default function AdminOrders() {
                           : "bg-blue-600 hover:bg-blue-700 text-white"
                       }`}
                     >
-                      {status === "processing" ? "Em Produção" :
+                      {status === "pending" ? "Marcar como Pendente" :
+                       status === "processing" ? "Marcar como Em Produção" :
                        status === "shipped" ? "Marcar como Enviado" :
                        "Marcar como Entregue"}
                     </Button>
