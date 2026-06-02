@@ -1,7 +1,7 @@
-import { COOKIE_NAME } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
-import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { COOKIE_NAME } from "../shared/const.ts";
+import { getSessionCookieOptions } from "./_core/cookies.ts";
+import { systemRouter } from "./_core/systemRouter.ts";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc.ts";
 import { 
   getCategories, 
   getProducts, 
@@ -11,10 +11,10 @@ import {
   getUserOrders,
   getOrderById,
   getOrderItems
-} from "./db";
+} from "./db.ts";
 import { z } from "zod";
-import { createPixPayment, mercadoPagoPublicKey } from "./mercadopago";
-import type { TrpcContext } from "./_core/context";
+import { createPixPayment, mercadoPagoPublicKey } from "./mercadopago.ts";
+import type { TrpcContext } from "./_core/context.ts";
 
 export const appRouter = router({
   system: systemRouter,

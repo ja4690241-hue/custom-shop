@@ -1,6 +1,6 @@
-import { NOT_ADMIN_ERR_MSG, UNAUTHED_ERR_MSG } from '@shared/const';
+import { NOT_ADMIN_ERR_MSG, UNAUTHED_ERR_MSG } from "../../shared/const.ts";
 import { initTRPC, TRPCError } from "@trpc/server";
-import type { TrpcContext } from "./context";
+import type { TrpcContext } from "./context.ts";
 
 const t = initTRPC.context<TrpcContext>().create();
 
