@@ -43,10 +43,17 @@ export async function createPixPayment(data: any) {
       body: JSON.stringify(body)
     });
 
-    const result = await response.json();
+    let result;
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      result = await response.json();
+    } else {
+      const text = await response.text();
+      return { error: true, message: "Resposta inválida do servidor de pagamento", details: text };
+    }
 
     if (!response.ok) {
-      const errorMsg = result.message || (result.cause && result.cause[0]?.description) || 'Erro MP';
+      const errorMsg = result.message || (result.cause && result.cause[0]?.description) || 'Erro no processamento do pagamento';
       return { error: true, message: errorMsg, details: result };
     }
 

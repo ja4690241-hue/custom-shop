@@ -27,14 +27,16 @@ export function CardPayment({ amount, orderId, customerEmail, customerCPF, custo
 
   const createPayment = trpc.orders.createPayment.useMutation({
     onSuccess: (data: any) => {
-      if (data.status === "approved") {
+      if (data.error) {
+        toast.error(data.message || "Erro ao processar pagamento");
+      } else if (data.status === "approved") {
         toast.success("Pagamento aprovado com sucesso!");
         onSuccess();
-      } else if (data.status === "pending") {
-        toast.info("Pagamento em análise. Você receberá uma confirmação em breve.");
+      } else if (data.status === "pending" || data.status === "in_process") {
+        toast.info("Pagamento em análise ou pendente. Você receberá uma confirmação em breve.");
         onSuccess();
       } else {
-        toast.error(`Pagamento ${data.status}. Tente novamente.`);
+        toast.error(`Status do pagamento: ${data.status || 'desconhecido'}. Tente novamente.`);
       }
       setLoading(false);
     },
