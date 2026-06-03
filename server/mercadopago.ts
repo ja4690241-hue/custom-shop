@@ -55,6 +55,7 @@ export async function createPixPayment(data: any) {
     }
 
     if (!response.ok) {
+      console.error(">>> MP Error Response:", JSON.stringify(result, null, 2));
       const errorMsg = result.message || (result.cause && result.cause[0]?.description) || 'Erro no processamento do pagamento';
       return { error: true, message: errorMsg, details: result };
     }
