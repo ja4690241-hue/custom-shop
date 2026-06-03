@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "../server/routers.js";
 import { createContext } from "../server/_core/context.js";
@@ -21,7 +21,7 @@ app.use(
 );
 
 // Fallback para erros não tratados para evitar que o Vercel retorne HTML
-app.use((err: any, req: any, res: any, next: any) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(">>> Global Error:", err);
   res.status(500).json({ error: true, message: "Erro interno no servidor" });
 });
