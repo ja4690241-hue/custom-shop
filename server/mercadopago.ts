@@ -24,14 +24,16 @@ export async function createPixPayment(data: any) {
       payment_method_id: 'pix',
       payer: {
         email: data.payer.email,
-        first_name: data.payer.first_name,
-        last_name: data.payer.last_name,
+        first_name: data.payer.first_name || 'Cliente',
+        last_name: data.payer.last_name || 'Custom Shop',
         identification: {
           type: 'CPF',
           number: data.payer.identification?.number.replace(/\D/g, '') || '00000000000'
         }
       }
     };
+    
+    console.log(">>> MP Request Body:", JSON.stringify(body, null, 2));
     
     const response = await fetch('https://api.mercadopago.com/v1/payments', {
       method: 'POST',

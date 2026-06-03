@@ -55,7 +55,7 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, custo
       email: customerEmail,
       firstName: firstName || "Cliente",
       lastName: lastNameParts.join(" ") || "Custom Shop",
-      cpf: customerCpf,
+      cpf: customerCpf?.replace(/\D/g, ""),
     });
   }, []);
 
