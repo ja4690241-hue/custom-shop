@@ -495,6 +495,11 @@ export default function Checkout() {
                     customerName={formData.fullName}
                     customerEmail={formData.email}
                     customerCpf={formData.cpf}
+                    onPaymentConfirmed={() => {
+                      saveLocalOrder(confirmedOrder);
+                      clearCart();
+                      navigate("/pedidos");
+                    }}
                   />
                   <Button
                     type="button"

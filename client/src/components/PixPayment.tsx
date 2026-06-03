@@ -201,6 +201,18 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, custo
             <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
             Pagamento processado via Mercado Pago. Após o pagamento, seu pedido será processado automaticamente.
           </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              toast.success("Simulação: Pagamento aprovado!");
+              if (onPaymentConfirmed) onPaymentConfirmed();
+            }}
+            className="w-full h-10 border-dashed border-blue-300 text-blue-600 hover:bg-blue-50 text-xs font-bold"
+          >
+            Simular Pagamento (Apenas Teste)
+          </Button>
         </div>
       </div>
     </div>

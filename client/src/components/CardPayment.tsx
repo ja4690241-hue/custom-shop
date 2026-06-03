@@ -209,6 +209,18 @@ export function CardPayment({ amount, orderId, customerEmail, customerCPF, custo
           <ShieldCheck className="h-3 w-3" />
           Seus dados estão protegidos por criptografia de ponta a ponta.
         </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            toast.success("Simulação: Cartão aprovado!");
+            onSuccess();
+          }}
+          className="w-full mt-4 h-10 border-dashed border-slate-300 text-slate-500 hover:bg-slate-50 text-xs font-bold"
+        >
+          Simular Pagamento (Apenas Teste)
+        </Button>
       </form>
     </div>
   );
