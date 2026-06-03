@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,7 @@ import { formatCurrency, getLocalOrders, type LocalOrder } from "@/lib/shop";
 import { ArrowLeft, Box, CalendarDays, PackageCheck, ShoppingBag, Truck, CheckCircle2, Clock, Zap } from "lucide-react";
 
 const statusConfig = {
+  pending: { label: "Pendente", icon: Clock, className: "bg-slate-100 text-slate-900 border-slate-300" },
   processing: { label: "Em produção", icon: Zap, className: "bg-amber-100 text-amber-900 border-amber-300" },
   shipped: { label: "Enviado", icon: Truck, className: "bg-blue-100 text-blue-900 border-blue-300" },
   delivered: { label: "Entregue", icon: CheckCircle2, className: "bg-emerald-100 text-emerald-900 border-emerald-300" },

@@ -9,7 +9,7 @@ export default function AdminOrders() {
   const [, navigate] = useLocation();
   const [orders, setOrders] = useState<LocalOrder[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<LocalOrder | null>(null);
-  const [filter, setFilter] = useState<"all" | "processing" | "shipped" | "delivered">("all");
+  const [filter, setFilter] = useState<"all" | "pending" | "processing" | "shipped" | "delivered">("all");
 
   useEffect(() => {
     setOrders(getLocalOrders());
@@ -19,7 +19,7 @@ export default function AdminOrders() {
     filter === "all" ? true : order.status === filter
   );
 
-  const updateOrderStatus = (orderId: string, newStatus: "processing" | "shipped" | "delivered") => {
+  const updateOrderStatus = (orderId: string, newStatus: "pending" | "processing" | "shipped" | "delivered") => {
     const order = orders.find(o => o.id === orderId);
     if (order) {
       order.status = newStatus;
@@ -29,12 +29,14 @@ export default function AdminOrders() {
       toast.success(`Pedido atualizado para: ${
         newStatus === "delivered" ? "Entregue" :
         newStatus === "shipped" ? "Enviado" :
-        "Em Produção"
+        newStatus === "processing" ? "Em Produção" :
+        "Pendente"
       }`);
     }
   };
 
   const statusConfig = {
+    pending: { label: "Pendente", icon: Package, color: "bg-slate-100 text-slate-900", nextStatus: "processing" as const },
     processing: { label: "Em Produção", icon: Package, color: "bg-amber-100 text-amber-900", nextStatus: "shipped" as const },
     shipped: { label: "Enviado", icon: Truck, color: "bg-blue-100 text-blue-900", nextStatus: "delivered" as const },
     delivered: { label: "Entregue", icon: CheckCircle2, color: "bg-emerald-100 text-emerald-900", nextStatus: null },
