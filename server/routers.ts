@@ -14,6 +14,7 @@ import {
 } from "./db.ts";
 import { z } from "zod";
 import { createPixPayment, mercadoPagoPublicKey } from "./mercadopago.ts";
+import { handleMercadoPagoWebhook } from "./webhook.ts";
 import type { TrpcContext } from "./_core/context.ts";
 
 export const appRouter = router({
@@ -123,6 +124,14 @@ export const appRouter = router({
           console.error(">>> createPayment Mutation Error:", err);
           return { error: true, message: err.message || "Erro ao processar pagamento" };
         }
+      }),
+    webhook: publicProcedure
+      .input(z.object({
+        type: z.string().optional(),
+        data: z.any().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return handleMercadoPagoWebhook(input);
       }),
   }),
 });
