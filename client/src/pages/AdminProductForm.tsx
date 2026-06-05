@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft, Upload, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useProducts } from "@/contexts/ProductsContext";
 
@@ -107,40 +107,27 @@ export default function AdminProductForm() {
         .map((s) => s.trim())
         .filter((s) => s);
 
+      const productData = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        colors: colors.length > 0 ? colors : ["#FFFFFF"],
+        sizes: sizes.length > 0 ? sizes : ["Único"],
+        stock: parseInt(formData.stock),
+        imageUrl: formData.imageUrl,
+        active: formData.active,
+      };
+
       if (isEditing && params?.id) {
-        // Atualizar produto
-        updateProduct(params.id, {
-          name: formData.name,
-          description: formData.description,
-          price: parseFloat(formData.price),
-          category: formData.category,
-          colors: colors.length > 0 ? colors : ["#000000"],
-          sizes: sizes.length > 0 ? sizes : ["Único"],
-          stock: parseInt(formData.stock),
-          imageUrl: formData.imageUrl,
-          active: formData.active,
-        });
+        updateProduct(params.id, productData);
         toast.success("Produto atualizado com sucesso!");
       } else {
-        // Criar novo produto
-        addProduct({
-          name: formData.name,
-          description: formData.description,
-          price: parseFloat(formData.price),
-          category: formData.category,
-          colors: colors.length > 0 ? colors : ["#000000"],
-          sizes: sizes.length > 0 ? sizes : ["Único"],
-          stock: parseInt(formData.stock),
-          imageUrl: formData.imageUrl,
-          active: formData.active,
-        });
+        addProduct(productData);
         toast.success("Produto criado com sucesso!");
       }
 
-      // Redirecionar após sucesso
-      setTimeout(() => {
-        navigate("/admin/produtos");
-      }, 1000);
+      navigate("/admin/produtos");
     } catch (error) {
       console.error("Erro ao salvar produto:", error);
       toast.error("Erro ao salvar produto. Tente novamente.");
@@ -150,18 +137,17 @@ export default function AdminProductForm() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border bg-card sticky top-0 z-40">
-        <div className="container max-w-7xl mx-auto px-4 py-4">
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <div className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-40">
+        <div className="container max-w-4xl mx-auto px-4 py-4">
           <button
             onClick={() => navigate("/admin/produtos")}
-            className="flex items-center gap-2 text-accent hover:text-accent/80 transition-colors mb-4"
+            className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors mb-2 font-bold"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
             Voltar
           </button>
-          <h1 className="text-4xl font-bold text-foreground">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
             {isEditing ? "Editar Produto" : "Novo Produto"}
           </h1>
         </div>
@@ -169,197 +155,174 @@ export default function AdminProductForm() {
 
       <div className="container max-w-4xl mx-auto px-4 py-12">
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Informações Básicas */}
-          <section className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-foreground mb-6">
-              Informações Básicas
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                name="name"
-                placeholder="Nome do Produto"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                required
-                className="px-4 py-2 rounded border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-              >
-                <option value="Canecas">Canecas</option>
-                <option value="Camisetas">Camisetas</option>
-                <option value="Kits">Kits</option>
-                <option value="Acessórios">Acessórios</option>
-              </select>
-            </div>
-            <textarea
-              name="description"
-              placeholder="Descrição do Produto"
-              value={formData.description}
-              onChange={handleChange}
-              rows={4}
-              className="w-full mt-4 px-4 py-2 rounded border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-            />
-          </section>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Info */}
+            <div className="lg:col-span-2 space-y-8">
+              <section className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 mb-6">Informações Gerais</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Nome do Produto</label>
+                    <Input
+                      name="name"
+                      placeholder="Ex: Caneca Personalizada"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="h-12 rounded-xl"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Descrição</label>
+                    <textarea
+                      name="description"
+                      placeholder="Descreva o produto..."
+                      value={formData.description}
+                      onChange={handleChange}
+                      rows={5}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </section>
 
-          {/* Preço e Estoque */}
-          <section className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-foreground mb-6">
-              Preço e Estoque
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-semibold text-foreground mb-2 block">
-                  Preço (R$)
-                </label>
-                <Input
-                  name="price"
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.price}
-                  onChange={handleChange}
-                  step="0.01"
-                  min="0"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-foreground mb-2 block">
-                  Quantidade em Estoque
-                </label>
-                <Input
-                  name="stock"
-                  type="number"
-                  placeholder="0"
-                  value={formData.stock}
-                  onChange={handleChange}
-                  min="0"
-                  required
-                />
-              </div>
-            </div>
-          </section>
+              <section className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 mb-6">Preço e Inventário</h2>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Preço (R$)</label>
+                    <Input
+                      name="price"
+                      type="number"
+                      step="0.01"
+                      value={formData.price}
+                      onChange={handleChange}
+                      className="h-12 rounded-xl"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Estoque</label>
+                    <Input
+                      name="stock"
+                      type="number"
+                      value={formData.stock}
+                      onChange={handleChange}
+                      className="h-12 rounded-xl"
+                      required
+                    />
+                  </div>
+                </div>
+              </section>
 
-          {/* Opções de Personalização */}
-          <section className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-foreground mb-6">
-              Opções de Personalização
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-semibold text-foreground mb-2 block">
-                  Cores (separadas por vírgula)
-                </label>
-                <Input
-                  name="colors"
-                  placeholder="Ex: #000000, #FFFFFF, #FF0000"
-                  value={formData.colors}
-                  onChange={handleChange}
-                />
-                <p className="text-xs text-foreground/50 mt-1">
-                  Use códigos hexadecimais de cores
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-foreground mb-2 block">
-                  Tamanhos (separados por vírgula)
-                </label>
-                <Input
-                  name="sizes"
-                  placeholder="Ex: P, M, G, GG"
-                  value={formData.sizes}
-                  onChange={handleChange}
-                />
-                <p className="text-xs text-foreground/50 mt-1">
-                  Deixe em branco para "Único"
-                </p>
-              </div>
+              <section className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 mb-6">Personalização</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Cores (Hex, ex: #FF0000)</label>
+                    <Input
+                      name="colors"
+                      placeholder="#000000, #FFFFFF"
+                      value={formData.colors}
+                      onChange={handleChange}
+                      className="h-12 rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Tamanhos (ex: P, M, G)</label>
+                    <Input
+                      name="sizes"
+                      placeholder="P, M, G, Único"
+                      value={formData.sizes}
+                      onChange={handleChange}
+                      className="h-12 rounded-xl"
+                    />
+                  </div>
+                </div>
+              </section>
             </div>
-          </section>
 
-          {/* Imagem do Produto */}
-          <section className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-foreground mb-6">
-              Imagem do Produto
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-3">
-                  Upload de Imagem
-                </label>
-                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-accent transition-colors cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    id="image-upload"
+            {/* Sidebar Info */}
+            <div className="space-y-8">
+              <section className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 mb-6">Mídia</h2>
+                <div className="space-y-4">
+                  <div className="aspect-square rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                    {imagePreview ? (
+                      <>
+                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <label htmlFor="image-upload" className="cursor-pointer bg-white text-slate-900 px-4 py-2 rounded-xl font-bold text-sm">Trocar Foto</label>
+                        </div>
+                      </>
+                    ) : (
+                      <label htmlFor="image-upload" className="cursor-pointer flex flex-col items-center gap-2">
+                        <Upload className="w-8 h-8 text-slate-300" />
+                        <span className="text-xs font-bold text-slate-400 uppercase">Upload</span>
+                      </label>
+                    )}
+                    <input id="image-upload" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                  </div>
+                  <Input
+                    name="imageUrl"
+                    placeholder="Ou cole a URL da imagem"
+                    value={formData.imageUrl}
+                    onChange={handleChange}
+                    className="h-10 rounded-xl text-xs"
                   />
-                  <label htmlFor="image-upload" className="cursor-pointer block">
-                    <Upload className="w-8 h-8 text-foreground/40 mx-auto mb-2" />
-                    <p className="text-foreground/60 text-sm">
-                      Clique para fazer upload ou arraste a imagem
-                    </p>
+                </div>
+              </section>
+
+              <section className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 mb-6">Organização</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Categoria</label>
+                    <select
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="Canecas">Canecas</option>
+                      <option value="Camisetas">Camisetas</option>
+                      <option value="Kits">Kits</option>
+                      <option value="Acessórios">Acessórios</option>
+                    </select>
+                  </div>
+                  <label className="flex items-center gap-3 cursor-pointer p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <input
+                      type="checkbox"
+                      name="active"
+                      checked={formData.active}
+                      onChange={handleChange}
+                      className="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-bold text-slate-700">Produto Ativo</span>
                   </label>
                 </div>
+              </section>
+
+              <div className="flex flex-col gap-3">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-14 bg-blue-600 hover:bg-blue-700 rounded-2xl font-black text-lg shadow-lg shadow-blue-500/20"
+                >
+                  <Save className="w-5 h-5 mr-2" />
+                  {loading ? "Salvando..." : isEditing ? "Salvar" : "Criar"}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => navigate("/admin/produtos")}
+                  variant="ghost"
+                  className="w-full h-12 rounded-2xl font-bold text-slate-500"
+                  disabled={loading}
+                >
+                  Cancelar
+                </Button>
               </div>
-              {imagePreview && (
-                <div>
-                  <p className="text-sm font-semibold text-foreground mb-3">
-                    Prévia
-                  </p>
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                </div>
-              )}
             </div>
-          </section>
-
-          {/* Status */}
-          <section className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Status</h2>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                name="active"
-                checked={formData.active}
-                onChange={handleChange}
-                className="w-5 h-5 rounded border-border cursor-pointer"
-              />
-              <span className="text-foreground font-medium">
-                Produto ativo (visível no catálogo)
-              </span>
-            </label>
-          </section>
-
-          {/* Buttons */}
-          <div className="flex gap-4">
-            <Button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-accent text-accent-foreground py-3 font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {loading
-                ? "Salvando..."
-                : isEditing
-                  ? "Atualizar Produto"
-                  : "Criar Produto"}
-            </Button>
-            <Button
-              type="button"
-              onClick={() => navigate("/admin/produtos")}
-              variant="outline"
-              className="flex-1"
-              disabled={loading}
-            >
-              Cancelar
-            </Button>
           </div>
         </form>
       </div>

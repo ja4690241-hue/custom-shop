@@ -63,7 +63,7 @@ export default function AdminCategories() {
           <div className="flex items-center justify-between">
             <h1 className="text-4xl font-bold text-foreground">Gerenciar Categorias</h1>
             <Button
-              onClick={() => toast.info("Funcionalidade de adicionar categoria em desenvolvimento")}
+              onClick={() => navigate("/admin/categorias/novo")}
               className="bg-accent text-accent-foreground"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -126,7 +126,7 @@ export default function AdminCategories() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => toast.info("Edição em desenvolvimento")}
+                          onClick={() => navigate(`/admin/categorias/${category.id}/editar`)}
                           className="p-2 text-accent hover:bg-accent/10 rounded transition-colors"
                           title="Editar categoria"
                         >

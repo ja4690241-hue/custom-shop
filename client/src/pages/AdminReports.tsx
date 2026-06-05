@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, TrendingUp, BarChart3, PieChart, Calendar } from "lucide-react";
+import { ArrowLeft, TrendingUp, BarChart3, PieChart, Calendar, DollarSign, ShoppingBag, CreditCard } from "lucide-react";
 import { getLocalOrders, formatCurrency, type LocalOrder } from "@/lib/shop";
 
 export default function AdminReports() {
@@ -32,6 +32,7 @@ export default function AdminReports() {
 
   // Status breakdown
   const statusBreakdown = {
+    pending: filteredOrders.filter(o => o.status === "pending").length,
     processing: filteredOrders.filter(o => o.status === "processing").length,
     shipped: filteredOrders.filter(o => o.status === "shipped").length,
     delivered: filteredOrders.filter(o => o.status === "delivered").length,
@@ -41,7 +42,7 @@ export default function AdminReports() {
   const paymentBreakdown = {
     pix: filteredOrders.filter(o => o.paymentMethod === "pix").length,
     card: filteredOrders.filter(o => o.paymentMethod === "card").length,
-    boleto: filteredOrders.filter(o => o.paymentMethod === "boleto").length,
+    transfer: filteredOrders.filter(o => o.paymentMethod === "transfer").length,
   };
 
   // Daily revenue
@@ -52,88 +53,88 @@ export default function AdminReports() {
   });
 
   const stats = [
-    { label: "Receita Total", value: `R$ ${totalRevenue.toFixed(2)}`, icon: TrendingUp, color: "text-emerald-600 bg-emerald-50" },
-    { label: "Número de Pedidos", value: totalOrders.toString(), icon: BarChart3, color: "text-blue-600 bg-blue-50" },
-    { label: "Ticket Médio", value: `R$ ${averageOrder.toFixed(2)}`, icon: PieChart, color: "text-purple-600 bg-purple-50" },
-    { label: "Itens Vendidos", value: totalItems.toString(), icon: Calendar, color: "text-orange-600 bg-orange-50" },
+    { label: "Receita Total", value: `R$ ${totalRevenue.toFixed(2)}`, icon: DollarSign, color: "text-emerald-600 bg-emerald-50" },
+    { label: "Total Pedidos", value: totalOrders.toString(), icon: ShoppingBag, color: "text-blue-600 bg-blue-50" },
+    { label: "Ticket Médio", value: `R$ ${averageOrder.toFixed(2)}`, icon: TrendingUp, color: "text-purple-600 bg-purple-50" },
+    { label: "Itens Vendidos", value: totalItems.toString(), icon: BarChart3, color: "text-orange-600 bg-orange-50" },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-xl shadow-sm">
-        <div className="container max-w-7xl mx-auto px-4 py-4">
-          <button
-            onClick={() => navigate("/admin")}
-            className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors font-semibold mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Voltar
-          </button>
-          <h1 className="text-3xl font-black text-slate-900">Relatórios de Vendas</h1>
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-md shadow-sm">
+        <div className="container max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/admin")}
+              className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-slate-600" />
+            </button>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Relatórios</h1>
+          </div>
+          <div className="flex bg-slate-100 p-1 rounded-xl">
+            {(["week", "month", "year"] as const).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                  period === p
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                {p === "week" ? "Semana" : p === "month" ? "Mês" : "Ano"}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
-      <main className="container max-w-7xl mx-auto px-4 py-12">
-        {/* Period Filter */}
-        <div className="mb-8 flex gap-3">
-          {(["week", "month", "year"] as const).map((p) => (
-            <Button
-              key={p}
-              onClick={() => setPeriod(p)}
-              variant={period === p ? "default" : "outline"}
-              className={`rounded-lg ${
-                period === p
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "border-slate-300 text-slate-600 hover:border-slate-400"
-              }`}
-            >
-              {p === "week" ? "Última Semana" : p === "month" ? "Último Mês" : "Último Ano"}
-            </Button>
-          ))}
-        </div>
-
+      <main className="container max-w-7xl mx-auto px-4 py-10">
         {/* Stats Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div key={stat.label} className={`rounded-2xl border border-slate-200 ${stat.color} p-6 shadow-lg`}>
-                <Icon className="w-8 h-8 mb-4 opacity-80" />
-                <p className="text-sm font-semibold text-slate-600 mb-2">{stat.label}</p>
-                <p className="text-3xl font-black text-slate-900">{stat.value}</p>
+              <div key={stat.label} className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+                <div className={`w-12 h-12 rounded-2xl ${stat.color} flex items-center justify-center mb-4`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{stat.label}</p>
+                <p className="text-2xl font-black text-slate-900">{stat.value}</p>
               </div>
             );
           })}
         </div>
 
-        {/* Charts Row */}
-        <div className="grid gap-6 lg:grid-cols-2 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
           {/* Status Breakdown */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">
-            <h2 className="text-xl font-black text-slate-900 mb-6">Status dos Pedidos</h2>
-            <div className="space-y-4">
+          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+            <h2 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-slate-400" />
+              Status dos Pedidos
+            </h2>
+            <div className="space-y-6">
               {[
-                { status: "Em Produção", count: statusBreakdown.processing, color: "bg-amber-100 text-amber-900" },
-                { status: "Enviado", count: statusBreakdown.shipped, color: "bg-blue-100 text-blue-900" },
-                { status: "Entregue", count: statusBreakdown.delivered, color: "bg-emerald-100 text-emerald-900" },
+                { status: "Pendente", count: statusBreakdown.pending, color: "bg-slate-500" },
+                { status: "Em Produção", count: statusBreakdown.processing, color: "bg-amber-500" },
+                { status: "Enviado", count: statusBreakdown.shipped, color: "bg-blue-500" },
+                { status: "Entregue", count: statusBreakdown.delivered, color: "bg-emerald-500" },
               ].map((item) => (
                 <div key={item.status}>
-                  <div className="flex justify-between mb-2">
-                    <span className="font-semibold text-slate-900">{item.status}</span>
-                    <span className={`px-3 py-1 rounded-full text-sm font-bold ${item.color}`}>
-                      {item.count}
+                  <div className="flex justify-between items-end mb-2">
+                    <div>
+                      <span className="text-sm font-bold text-slate-900">{item.status}</span>
+                      <p className="text-xs text-slate-400 font-bold">{item.count} pedidos</p>
+                    </div>
+                    <span className="text-sm font-black text-slate-900">
+                      {totalOrders > 0 ? Math.round((item.count / totalOrders) * 100) : 0}%
                     </span>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
                     <div
-                      className={`h-2 rounded-full ${
-                        item.status === "Em Produção"
-                          ? "bg-amber-500"
-                          : item.status === "Enviado"
-                          ? "bg-blue-500"
-                          : "bg-emerald-500"
-                      }`}
+                      className={`h-full rounded-full ${item.color} transition-all duration-1000`}
                       style={{ width: `${totalOrders > 0 ? (item.count / totalOrders) * 100 : 0}%` }}
                     />
                   </div>
@@ -143,30 +144,30 @@ export default function AdminReports() {
           </div>
 
           {/* Payment Method Breakdown */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">
-            <h2 className="text-xl font-black text-slate-900 mb-6">Métodos de Pagamento</h2>
-            <div className="space-y-4">
+          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+            <h2 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-slate-400" />
+              Métodos de Pagamento
+            </h2>
+            <div className="space-y-6">
               {[
-                { method: "PIX", count: paymentBreakdown.pix, color: "bg-blue-100 text-blue-900" },
-                { method: "Cartão", count: paymentBreakdown.card, color: "bg-purple-100 text-purple-900" },
-                { method: "Boleto", count: paymentBreakdown.boleto, color: "bg-orange-100 text-orange-900" },
+                { method: "PIX", count: paymentBreakdown.pix, color: "bg-blue-600" },
+                { method: "Cartão", count: paymentBreakdown.card, color: "bg-purple-600" },
+                { method: "Transferência", count: paymentBreakdown.transfer, color: "bg-orange-600" },
               ].map((item) => (
                 <div key={item.method}>
-                  <div className="flex justify-between mb-2">
-                    <span className="font-semibold text-slate-900">{item.method}</span>
-                    <span className={`px-3 py-1 rounded-full text-sm font-bold ${item.color}`}>
-                      {item.count}
+                  <div className="flex justify-between items-end mb-2">
+                    <div>
+                      <span className="text-sm font-bold text-slate-900">{item.method}</span>
+                      <p className="text-xs text-slate-400 font-bold">{item.count} pedidos</p>
+                    </div>
+                    <span className="text-sm font-black text-slate-900">
+                      {totalOrders > 0 ? Math.round((item.count / totalOrders) * 100) : 0}%
                     </span>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
                     <div
-                      className={`h-2 rounded-full ${
-                        item.method === "PIX"
-                          ? "bg-blue-500"
-                          : item.method === "Cartão"
-                          ? "bg-purple-500"
-                          : "bg-orange-500"
-                      }`}
+                      className={`h-full rounded-full ${item.color} transition-all duration-1000`}
                       style={{ width: `${totalOrders > 0 ? (item.count / totalOrders) * 100 : 0}%` }}
                     />
                   </div>
@@ -177,29 +178,36 @@ export default function AdminReports() {
         </div>
 
         {/* Daily Revenue Table */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-lg overflow-hidden">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="p-8 border-b border-slate-200">
-            <h2 className="text-xl font-black text-slate-900">Receita Diária</h2>
+            <h2 className="text-xl font-black text-slate-900">Histórico de Receita</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">Data</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-slate-900">Receita</th>
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-8 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Data</th>
+                  <th className="px-8 py-4 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Faturamento</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-100">
                 {Object.entries(dailyRevenue)
-                  .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
+                  .sort(([a], [b]) => new Date(b.split("/").reverse().join("-")).getTime() - new Date(a.split("/").reverse().join("-")).getTime())
                   .map(([date, revenue]) => (
-                    <tr key={date} className="border-b border-slate-200 hover:bg-slate-50 transition">
-                      <td className="px-6 py-4 font-semibold text-slate-900">{date}</td>
-                      <td className="px-6 py-4 text-right font-bold text-emerald-600">
+                    <tr key={date} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-8 py-4 text-sm font-bold text-slate-900">{date}</td>
+                      <td className="px-8 py-4 text-right font-black text-emerald-600">
                         R$ {revenue.toFixed(2)}
                       </td>
                     </tr>
                   ))}
+                {Object.keys(dailyRevenue).length === 0 && (
+                  <tr>
+                    <td colSpan={2} className="px-8 py-10 text-center text-slate-400 font-bold">
+                      Nenhuma venda registrada no período.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
