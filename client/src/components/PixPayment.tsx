@@ -82,8 +82,8 @@ export function PixPayment({ amount, orderId, customerName, customerEmail, custo
   const [qrCodeBase64, setQrCodeBase64] = useState<string | null>(null);
 
   useEffect(() => {
-    if (createPayment.data) {
-      const base64 = createPayment.data.point_of_interaction?.transaction_data?.qr_code_base64;
+    if (createPayment.data && 'point_of_interaction' in createPayment.data) {
+      const base64 = (createPayment.data as any).point_of_interaction?.transaction_data?.qr_code_base64;
       if (base64) setQrCodeBase64(base64);
     }
   }, [createPayment.data]);

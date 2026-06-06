@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Eye, CheckCircle2, Truck, Package, Loader2 } from "lucide-react";
-import { getLocalOrders, saveLocalOrder, formatCurrency, type LocalOrder } from "@/lib/shop";
+import { getLocalOrders, saveLocalOrder, formatCurrency, type LocalOrder, type LocalOrderStatus } from "@/lib/shop";
 import { toast } from "sonner";
 
 export default function AdminOrders() {
