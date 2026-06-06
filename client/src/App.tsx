@@ -16,6 +16,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
 import AdminOrders from "./pages/AdminOrders";
 import AdminReports from "./pages/AdminReports";
+import AdminCategories from "./pages/AdminCategories";
 import AdminCategoryForm from "./pages/AdminCategoryForm";
 import About from "./pages/About";
 import FAQ from "./pages/FAQ";
