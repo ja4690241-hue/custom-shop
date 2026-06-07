@@ -8,6 +8,8 @@ import { ArrowLeft, CheckCircle2, CreditCard, PackageCheck, ShieldCheck, QrCode,
 import { toast } from "sonner";
 import { PixPayment } from "@/components/PixPayment";
 import { CardPayment } from "@/components/CardPayment";
+import { CouponInput } from "@/components/CouponInput";
+import { useState } from "react";
 
 export default function Checkout() {
   const [, navigate] = useLocation();
@@ -18,6 +20,8 @@ export default function Checkout() {
   const [showPix, setShowPix] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState<any>(null);
+  const [appliedDiscount, setAppliedDiscount] = useState(0);
+  const [appliedCouponCode, setAppliedCouponCode] = useState("");
   
   const [formData, setFormData] = useState({
     fullName: "",

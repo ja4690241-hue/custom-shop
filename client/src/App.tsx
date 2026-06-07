@@ -18,6 +18,7 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminReports from "./pages/AdminReports";
 import AdminCategories from "./pages/AdminCategories";
 import AdminCategoryForm from "./pages/AdminCategoryForm";
+import WhatsAppButton from "./components/WhatsAppButton";
 import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
@@ -65,6 +66,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
+            <WhatsAppButton />
           </TooltipProvider>
         </ProductsProvider>
       </ThemeProvider>

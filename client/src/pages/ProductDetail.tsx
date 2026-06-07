@@ -10,6 +10,7 @@ import { formatCurrency, getColorLabel } from "@/lib/shop";
 import { ArrowLeft, CheckCircle2, Minus, Plus, RotateCcw, ShoppingBag, Sparkles, Truck, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
+import { ReviewsSection } from "@/components/ReviewsSection";
 
 const calculateCustomizationPrice = (text: string, color: string, size: string) => {
   let price = 0;
